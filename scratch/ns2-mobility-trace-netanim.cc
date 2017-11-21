@@ -47,6 +47,12 @@
  *  NOTE 3: Duration must be a positive number and should match the trace file. Note that you must know it before to be able to load it.
  */
 
+extern "C" {
+#include <neo4j-client.h>
+#include <errno.h>
+#include <stdio.h>
+}
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -335,6 +341,16 @@ int main(int argc, char *argv[]) {
 	SiotApplicationHelper siot(9);
 	ApplicationContainer appContainer = siot.Install(stas);
 
+	neo4j_client_init();
+
+	/* use NEO4J_INSECURE when connecting to disable TLS */
+	neo4j_connection_t *connection = neo4j_connect(
+			"neo4j://neo4j:neo@localhost:7687", NULL, NEO4J_INSECURE);
+	if (connection == NULL) {
+		neo4j_perror(stderr, errno, "Connection failed");
+		return EXIT_FAILURE;
+	}
+
 	for (unsigned int i = 0; i < stas.GetN(); i++) {
 		Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication>(
 				stas.Get(i)->GetApplication(siotApplicationIndex));
@@ -409,8 +425,8 @@ int main(int argc, char *argv[]) {
 	Simulator::Run();
 	Simulator::Destroy();
 
-	//osd.close();
-	//os.close(); // close log file
+	neo4j_close(connection);
+	neo4j_client_cleanup();
 
 	return 0;
 }
