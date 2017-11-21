@@ -67,15 +67,13 @@ NS_LOG_COMPONENT_DEFINE("SiotSim");
 static int siotApplicationIndex = 0; // index of siot-server in nodes
 static int proximityCheckInterval = 3; // seconds
 
-static unsigned int WriteProfileHeadersToCsv(std::ostream &os, Ptr<Node> node)
-{
+static unsigned int WriteProfileHeadersToCsv(std::ostream &os, Ptr<Node> node) {
 
 	std::unordered_map<std::string, std::string> profile =
 			DynamicCast<SiotApplication>(
 					node->GetApplication(siotApplicationIndex))->GetProfile()->GetRaw();
 
-	for (auto it = profile.begin(); it != profile.end(); it++)
-	{
+	for (auto it = profile.begin(); it != profile.end(); it++) {
 		if (it == profile.begin())
 			os << "nodeId," << it->first;
 		else
@@ -87,12 +85,10 @@ static unsigned int WriteProfileHeadersToCsv(std::ostream &os, Ptr<Node> node)
 }
 
 static void WriteProfileToCsv(std::ostream &os, NodeContainer &nodes,
-		unsigned int headerColumns)
-{
+		unsigned int headerColumns) {
 	uint32_t containerSize = nodes.GetN();
 
-	for (unsigned int i = 0; i < containerSize; i++)
-	{
+	for (unsigned int i = 0; i < containerSize; i++) {
 		std::unordered_map<std::string, std::string> profile =
 				DynamicCast<SiotApplication>(
 						nodes.Get(i)->GetApplication(siotApplicationIndex))->GetProfile()->GetRaw();
@@ -100,8 +96,7 @@ static void WriteProfileToCsv(std::ostream &os, NodeContainer &nodes,
 		NS_ASSERT_MSG(profile.size() == headerColumns,
 				"Profile columns and header columns are not equal " << profile.size() << " != " << headerColumns);
 
-		for (auto it = profile.begin(); it != profile.end(); it++)
-		{
+		for (auto it = profile.begin(); it != profile.end(); it++) {
 			if (it == profile.begin())
 				os << nodes.Get(i)->GetId() << "," << it->second;
 			else
@@ -112,8 +107,8 @@ static void WriteProfileToCsv(std::ostream &os, NodeContainer &nodes,
 	}
 }
 
-static std::vector<std::string> getNextLineAndSplitIntoTokens(std::istream& str)
-{
+static std::vector<std::string> getNextLineAndSplitIntoTokens(
+		std::istream& str) {
 	std::vector<std::string> result;
 	std::string line;
 	std::getline(str, line);
@@ -121,13 +116,11 @@ static std::vector<std::string> getNextLineAndSplitIntoTokens(std::istream& str)
 	std::stringstream lineStream(line);
 	std::string cell;
 
-	while (std::getline(lineStream, cell, ','))
-	{
+	while (std::getline(lineStream, cell, ',')) {
 		result.push_back(cell);
 	}
 	// This checks for a trailing comma with no data after it.
-	if (!lineStream && cell.empty())
-	{
+	if (!lineStream && cell.empty()) {
 		// If there was a trailing comma then add an empty element.
 		result.push_back("");
 	}
@@ -135,34 +128,26 @@ static std::vector<std::string> getNextLineAndSplitIntoTokens(std::istream& str)
 }
 
 static std::vector<std::unordered_map<std::string, std::string>> ReadProfileCsv(
-		std::istream& str)
-{
+		std::istream& str) {
 
 	std::vector<std::unordered_map<std::string, std::string>> profile;
 	std::vector<std::string> headers;
 
 	// Read Headers
-	if (str.good())
-	{
+	if (str.good()) {
 		headers = getNextLineAndSplitIntoTokens(str);
-	}
-	else
-	{
+	} else {
 		return profile;
 	}
 
-	while (str.good())
-	{
+	while (str.good()) {
 		std::unordered_map<std::string, std::string> line;
 		std::vector<std::string> values = getNextLineAndSplitIntoTokens(str);
 
-		if (headers.size() == values.size())
-		{
+		if (headers.size() == values.size()) {
 			for (auto headerIt = headers.begin(), valueIt = values.begin();
-					headerIt != headers.end(); headerIt++, valueIt++)
-			{
-				line.insert(
-				{ *headerIt, *valueIt });
+					headerIt != headers.end(); headerIt++, valueIt++) {
+				line.insert( { *headerIt, *valueIt });
 				NS_LOG_DEBUG(
 						"Reading Node profile... " << *headerIt << " : " << *valueIt);
 			}
@@ -240,35 +225,29 @@ static std::vector<std::unordered_map<std::string, std::string>> ReadProfileCsv(
  */
 
 static void RelationshipAdded(std::string context, Ptr<const Relationship> rel,
-		const SiotApplication& thisNode)
-{
+		const SiotApplication& thisNode) {
 	auto sp = thisNode.GetProfile();
 	NS_LOG_DEBUG(
 			"Relationship profile: " << *(DynamicCast<SiotApplication>(rel->GetRelatedTo()->GetApplication(siotApplicationIndex))->GetProfile()));
 }
 
-static double DistanceBetweenNodes(Ptr<Node> node1, Ptr<Node> node2)
-{
+static double DistanceBetweenNodes(Ptr<Node> node1, Ptr<Node> node2) {
 	Ptr<MobilityModel> model1 = node1->GetObject<MobilityModel>();
 	Ptr<MobilityModel> model2 = node2->GetObject<MobilityModel>();
 	return model1->GetDistanceFrom(model2);
 }
 
-static void NodeContact(NodeContainer *nodes, std::ofstream *os)
-{
+static void NodeContact(NodeContainer *nodes, std::ofstream *os) {
 	int numberOfNodes = nodes->GetN();
-	for (int i = 0; i < numberOfNodes; i++)
-	{
-		for (int j = 0; j < numberOfNodes; j++)
-		{
+	for (int i = 0; i < numberOfNodes; i++) {
+		for (int j = 0; j < numberOfNodes; j++) {
 			Ptr<Node> node1 = nodes->Get(i);
 			Ptr<Node> node2 = nodes->Get(j);
 
 			double distanceBetweenNodes = DistanceBetweenNodes(node1, node2);
 
 			if (distanceBetweenNodes <= 10
-					&& !(node1->GetId() == node2->GetId()))
-			{
+					&& !(node1->GetId() == node2->GetId())) {
 
 				// Add node contact to serv1
 				Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication>(
@@ -291,8 +270,7 @@ static void NodeContact(NodeContainer *nodes, std::ofstream *os)
 }
 
 // Example to use ns2 traces file in ns3
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	std::string animFile;
 	std::string traceFile;
 	std::string profileFile;
@@ -319,8 +297,7 @@ int main(int argc, char *argv[])
 	cmd.Parse(argc, argv);
 
 	// Check command line arguments
-	if (traceFile.empty() || nodeNum <= 0 || duration <= 0 || logFile.empty())
-	{
+	if (traceFile.empty() || nodeNum <= 0 || duration <= 0 || logFile.empty()) {
 		std::cout << "Usage of " << argv[0]
 				<< " :\n\n"
 						"./waf --run \"ns2-mobility-trace"
@@ -358,8 +335,7 @@ int main(int argc, char *argv[])
 	SiotApplicationHelper siot(9);
 	ApplicationContainer appContainer = siot.Install(stas);
 
-	for (unsigned int i = 0; i < stas.GetN(); i++)
-	{
+	for (unsigned int i = 0; i < stas.GetN(); i++) {
 		Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication>(
 				stas.Get(i)->GetApplication(siotApplicationIndex));
 		serv1->TraceConnect("RelationshipAdded", "context",
@@ -381,15 +357,11 @@ int main(int argc, char *argv[])
 	uint32_t stasSize = stas.GetN();
 
 	// Add profiles to SiotApplications
-	for (unsigned int i = 0; i < stasSize; i++)
-	{
+	for (unsigned int i = 0; i < stasSize; i++) {
 		Vector3D pos = stas.Get(i)->GetObject<MobilityModel>()->GetPosition();
-		profiles.at(i).insert(
-		{ "x_pos", std::to_string(pos.x) });
-		profiles.at(i).insert(
-		{ "y_pos", std::to_string(pos.y) });
-		profiles.at(i).insert(
-		{ "z_pos", std::to_string(pos.z) });
+		profiles.at(i).insert( { "x_pos", std::to_string(pos.x) });
+		profiles.at(i).insert( { "y_pos", std::to_string(pos.y) });
+		profiles.at(i).insert( { "z_pos", std::to_string(pos.z) });
 		Ptr<ServiceProfile> sp = CreateObject<ServiceProfile>("energy_profile",
 				profiles.at(i));
 		Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication>(
