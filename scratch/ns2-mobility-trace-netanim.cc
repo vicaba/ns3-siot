@@ -230,11 +230,33 @@ static std::vector<std::unordered_map<std::string, std::string>> ReadProfileCsv(
  }
  */
 
-static void RelationshipAdded(std::string context, Ptr<const Relationship> rel,
+static void RelationshipAdded(neo4j_connection_t *connection, Ptr<const Relationship> rel,
 		const SiotApplication& thisNode) {
 	auto sp = thisNode.GetProfile();
 	NS_LOG_DEBUG(
 			"Relationship profile: " << *(DynamicCast<SiotApplication>(rel->GetRelatedTo()->GetApplication(siotApplicationIndex))->GetProfile()));
+
+	  neo4j_result_stream_t *results =
+	          neo4j_run(connection, "RETURN 'hello world'", neo4j_null);
+	  if (results == NULL)
+	  {
+	      neo4j_perror(stderr, errno, "Failed to run statement");
+	  }
+
+	  neo4j_result_t *result = neo4j_fetch_next(results);
+	  if (result == NULL)
+	  {
+	      neo4j_perror(stderr, errno, "Failed to fetch result");
+	  }
+
+	  neo4j_value_t value = neo4j_result_field(result, 0);
+	  char buf[128];
+	  printf("%s\n", neo4j_tostring(value, buf, sizeof(buf)));
+
+	  neo4j_close_results(results);
+
+	  //exit(-1);
+
 }
 
 static double DistanceBetweenNodes(Ptr<Node> node1, Ptr<Node> node2) {
@@ -341,6 +363,7 @@ int main(int argc, char *argv[]) {
 	SiotApplicationHelper siot(9);
 	ApplicationContainer appContainer = siot.Install(stas);
 
+	// Open neo4j client
 	neo4j_client_init();
 
 	/* use NEO4J_INSECURE when connecting to disable TLS */
@@ -354,8 +377,8 @@ int main(int argc, char *argv[]) {
 	for (unsigned int i = 0; i < stas.GetN(); i++) {
 		Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication>(
 				stas.Get(i)->GetApplication(siotApplicationIndex));
-		serv1->TraceConnect("RelationshipAdded", "context",
-				MakeCallback(&RelationshipAdded));
+		serv1->TraceConnectWithoutContext("RelationshipAdded",
+				MakeBoundCallback(&RelationshipAdded, connection));
 	}
 
 	// Open profile file to read node profiles from
@@ -425,6 +448,7 @@ int main(int argc, char *argv[]) {
 	Simulator::Run();
 	Simulator::Destroy();
 
+	// Close neo4j client
 	neo4j_close(connection);
 	neo4j_client_cleanup();
 
