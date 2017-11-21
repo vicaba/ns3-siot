@@ -445,8 +445,9 @@ def configure(conf):
                 conf.report_optional_feature("static", "Static build", False,
                                              "Link flag -Wl,--whole-archive,-Bstatic does not work")
 
-    # Enable C++-11 support
-    env.append_value('CXXFLAGS', '-std=c++11')
+    # Enable C++-14 support
+    env.append_value('CXXFLAGS', '-std=c++14')
+    
 
     # Set this so that the lists won't be printed at the end of this
     # configure command.

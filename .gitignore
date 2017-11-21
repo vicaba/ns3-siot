@@ -1,3 +1,6 @@
+.settings/
+traces_logs/
+
 *.diff
 *.orig
 *.patch
