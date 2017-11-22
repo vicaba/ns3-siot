@@ -10,7 +10,7 @@
 namespace ns3
 {
 
-SorRelationship::SorRelationship(Ptr<Node> rel): Relationship(rel)
+SorRelationship::SorRelationship(Ptr<SiotApplication> rel): Relationship(rel)
 {
 	// TODO Auto-generated constructor stub
 
@@ -23,7 +23,6 @@ SorRelationship::~SorRelationship()
 
 const RelationshipType SorRelationship::GetType() const {
 	return RelationshipType::SOR;
-
 }
 
 }/* namespace ns3 */

@@ -33,6 +33,10 @@ namespace ns3
 class Socket;
 class Packet;
 
+class Relationship;
+class CworRelationship;
+class SorRelationship;
+
 /**
  * \ingroup applications 
  * \defgroup siot SIoT

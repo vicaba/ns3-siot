@@ -29,7 +29,7 @@ std::string Relationship::RelationshipTypeToString(RelationshipType rel)
 	}
 }
 
-Relationship::Relationship(Ptr<Node> rel)
+Relationship::Relationship(Ptr<SiotApplication> rel)
 {
 	this->m_relNode = rel;
 }
@@ -39,7 +39,7 @@ Relationship::~Relationship()
 }
 
 Ptr<Node> Relationship::GetRelatedTo() const {
-	return this->m_relNode;
+	return this->m_relNode->GetNode();
 }
 
 } /* namespace ns3 */

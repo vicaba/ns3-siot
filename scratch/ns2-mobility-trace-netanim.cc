@@ -251,20 +251,21 @@ static void NodeContact(NodeContainer *nodes, std::ofstream *os) {
 			Ptr<Node> node1 = nodes->Get(i);
 			Ptr<Node> node2 = nodes->Get(j);
 
+			Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication>(
+					node1->GetApplication(siotApplicationIndex));
+			Ptr<SiotApplication> serv2 = DynamicCast<SiotApplication>(
+					node2->GetApplication(siotApplicationIndex));
+
 			double distanceBetweenNodes = DistanceBetweenNodes(node1, node2);
 
 			if (distanceBetweenNodes <= 10
 					&& !(node1->GetId() == node2->GetId())) {
 
 				// Add node contact to serv1
-				Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication>(
-						node1->GetApplication(siotApplicationIndex));
-				serv1->AddSorRelationship(Create<SorRelationship>(node2));
+				serv1->AddSorRelationship(Create<SorRelationship>(serv2));
 
 				// Add node contact to serv2
-				Ptr<SiotApplication> serv2 = DynamicCast<SiotApplication>(
-						node2->GetApplication(siotApplicationIndex));
-				serv1->AddSorRelationship(Create<SorRelationship>(node1));
+				serv1->AddSorRelationship(Create<SorRelationship>(serv1));
 
 			}
 

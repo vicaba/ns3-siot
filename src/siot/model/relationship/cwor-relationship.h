@@ -9,16 +9,20 @@
 #define RELATIONSHIP_CWOR_RELATIONSHIP_H_
 
 #include "relationship.h"
+
 #include "ns3/core-module.h"
 #include "ns3/network-module.h"
+
 
 namespace ns3
 {
 
+class SiotApplication;
+
 class CworRelationship: public Relationship
 {
 public:
-	CworRelationship(Ptr<Node>);
+	CworRelationship(Ptr<SiotApplication>);
 	virtual ~CworRelationship();
 	const RelationshipType GetType() const;
 

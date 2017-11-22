@@ -14,6 +14,8 @@
 namespace ns3
 {
 
+class SiotApplication;
+
 enum RelationshipType
 {
 	POR, CLOR, CWOR, OOR, SOR
@@ -23,14 +25,14 @@ class Relationship: public Object
 {
 public:
 	static std::string RelationshipTypeToString(RelationshipType);
-	Relationship(Ptr<Node>);
+	Relationship(Ptr<SiotApplication>);
 	virtual ~Relationship();
 	Ptr<Node> GetRelatedTo() const;
 	virtual const RelationshipType GetType() const = 0;
 
 protected:
 	RelationshipType m_relType;
-	Ptr<Node> m_relNode;
+	Ptr<SiotApplication> m_relNode;
 
 };
 

@@ -9,16 +9,19 @@
 #define RELATIONSHIP_SOR_RELATIONSHIP_H_
 
 #include "relationship.h"
+
 #include "ns3/core-module.h"
 #include "ns3/network-module.h"
 
 namespace ns3
 {
 
+class SiotApplication;
+
 class SorRelationship: public Relationship
 {
 public:
-	SorRelationship(Ptr<Node>);
+	SorRelationship(Ptr<SiotApplication>);
 	virtual ~SorRelationship();
 	virtual const RelationshipType GetType() const;
 };
