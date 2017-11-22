@@ -230,32 +230,11 @@ static std::vector<std::unordered_map<std::string, std::string>> ReadProfileCsv(
  }
  */
 
-static void RelationshipAdded(neo4j_connection_t *connection, Ptr<const Relationship> rel,
-		const SiotApplication& thisNode) {
+static void RelationshipAdded(neo4j_connection_t *connection,
+		Ptr<const Relationship> rel, const SiotApplication& thisNode) {
 	auto sp = thisNode.GetProfile();
 	NS_LOG_DEBUG(
 			"Relationship profile: " << *(DynamicCast<SiotApplication>(rel->GetRelatedTo()->GetApplication(siotApplicationIndex))->GetProfile()));
-
-	  neo4j_result_stream_t *results =
-	          neo4j_run(connection, "RETURN 'hello world'", neo4j_null);
-	  if (results == NULL)
-	  {
-	      neo4j_perror(stderr, errno, "Failed to run statement");
-	  }
-
-	  neo4j_result_t *result = neo4j_fetch_next(results);
-	  if (result == NULL)
-	  {
-	      neo4j_perror(stderr, errno, "Failed to fetch result");
-	  }
-
-	  neo4j_value_t value = neo4j_result_field(result, 0);
-	  char buf[128];
-	  printf("%s\n", neo4j_tostring(value, buf, sizeof(buf)));
-
-	  neo4j_close_results(results);
-
-	  //exit(-1);
 
 }
 
@@ -372,6 +351,29 @@ int main(int argc, char *argv[]) {
 	if (connection == NULL) {
 		neo4j_perror(stderr, errno, "Connection failed");
 		return EXIT_FAILURE;
+	}
+
+	//Add nodes to neo4j database
+	for (unsigned int i = 0; i < stas.GetN(); i++) {
+		neo4j_map_entry_t nodeId = neo4j_map_entry("nodeId", neo4j_int(stas.Get(i)->GetId()));
+
+		neo4j_result_stream_t *results = neo4j_run(connection,
+				"CREATE (n:Node {id:{nodeId}})", neo4j_map(&nodeId, 1));
+		if (results == NULL) {
+			neo4j_perror(stderr, errno, "Failed to run statement");
+		}
+
+		neo4j_result_t *result = neo4j_fetch_next(results);
+		if (result == NULL) {
+			neo4j_perror(stderr, errno, "Failed to fetch result");
+		}
+
+		neo4j_value_t value = neo4j_result_field(result, 0);
+		char buf[128];
+		printf("%s\n", neo4j_tostring(value, buf, sizeof(buf)));
+
+		neo4j_close_results(results);
+
 	}
 
 	for (unsigned int i = 0; i < stas.GetN(); i++) {
