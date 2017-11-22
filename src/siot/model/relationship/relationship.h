@@ -8,6 +8,10 @@
 #ifndef RELATIONSHIP_H_
 #define RELATIONSHIP_H_
 
+#include <memory>
+
+#include "relationship.h"
+
 #include "ns3/core-module.h"
 #include "ns3/network-module.h"
 
@@ -27,12 +31,11 @@ public:
 	static std::string RelationshipTypeToString(RelationshipType);
 	Relationship(Ptr<SiotApplication>);
 	virtual ~Relationship();
-	Ptr<Node> GetRelatedTo() const;
+	Ptr<SiotApplication> GetRelatedTo() const;
 	virtual const RelationshipType GetType() const = 0;
 
 protected:
-	RelationshipType m_relType;
-	Ptr<SiotApplication> m_relNode;
+	std::weak_ptr<SiotApplication> m_relNode;
 
 };
 

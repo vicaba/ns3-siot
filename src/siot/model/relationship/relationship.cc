@@ -34,12 +34,13 @@ Relationship::Relationship(Ptr<SiotApplication> rel)
 	this->m_relNode = rel;
 }
 
+
 Relationship::~Relationship()
 {
 }
 
-Ptr<Node> Relationship::GetRelatedTo() const {
-	return this->m_relNode->GetNode();
+Ptr<SiotApplication> Relationship::GetRelatedTo() const {
+	return this->m_relNode.lock();
 }
 
 } /* namespace ns3 */

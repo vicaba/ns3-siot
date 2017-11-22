@@ -233,8 +233,8 @@ static std::vector<std::unordered_map<std::string, std::string>> ReadProfileCsv(
 static void RelationshipAdded(neo4j_connection_t *connection,
 		Ptr<const Relationship> rel, const SiotApplication& thisNode) {
 	auto sp = thisNode.GetProfile();
-	NS_LOG_DEBUG(
-			"Relationship profile: " << *(DynamicCast<SiotApplication>(rel->GetRelatedTo()->GetApplication(siotApplicationIndex))->GetProfile()));
+	//NS_LOG_DEBUG(
+	//		"Relationship profile: " << *(DynamicCast<SiotApplication>(rel->GetRelatedTo()->GetApplication(siotApplicationIndex))->GetProfile()));
 
 }
 
@@ -262,10 +262,10 @@ static void NodeContact(NodeContainer *nodes, std::ofstream *os) {
 					&& !(node1->GetId() == node2->GetId())) {
 
 				// Add node contact to serv1
-				serv1->AddSorRelationship(Create<SorRelationship>(serv2));
+				//serv1->AddSorRelationship(Create<SorRelationship>(CworRelationship::CworRelationship(Ptr<SiotApplication> rel)));
 
 				// Add node contact to serv2
-				serv1->AddSorRelationship(Create<SorRelationship>(serv1));
+				//serv1->AddSorRelationship(Create<SorRelationship>(serv1));
 
 			}
 
