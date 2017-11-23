@@ -10,7 +10,7 @@
 namespace ns3
 {
 
-CworRelationship::CworRelationship(Ptr<SiotApplication> rel): Relationship(rel)
+CworRelationship::CworRelationship(Ptr<Node> rel): Relationship(rel)
 {
 	// TODO Auto-generated constructor stub
 

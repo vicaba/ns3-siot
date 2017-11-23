@@ -29,7 +29,7 @@ namespace ns3
 	}
 }*/
 
-Relationship::Relationship(Ptr<SiotApplication> rel)
+Relationship::Relationship(Ptr<Node> rel)
 {
 	this->m_relNode = rel;
 }
@@ -38,7 +38,7 @@ Relationship::~Relationship()
 {
 }
 
-Ptr<SiotApplication> Relationship::GetRelatedTo() const {
+Ptr<Node> Relationship::GetRelatedTo() const {
 	return this->m_relNode;
 }
 
