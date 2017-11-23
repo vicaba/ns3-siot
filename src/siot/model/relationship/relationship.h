@@ -9,12 +9,14 @@
 #define SRC_SIOT_MODEL_RELATIONSHIP_H_
 
 #include "ns3/core-module.h"
-#include "ns3/network-module.h"
 
+#include "ns3/siot-application.h"
 
 
 namespace ns3
 {
+
+class SiotApplication;
 
 enum class RelationshipType
 {
@@ -25,14 +27,14 @@ class Relationship: public Object
 {
 public:
 	//static std::string RelationshipTypeToString(RelationshipType);
-	Relationship(Ptr<Node>);
+	Relationship(Ptr<SiotApplication>);
 	virtual ~Relationship();
-	Ptr<Node> GetRelatedTo() const;
+	Ptr<SiotApplication> GetRelatedTo() const;
 	virtual const std::string GetType() const = 0;
 
 protected:
 	RelationshipType m_relType;
-	Ptr<Node> m_relNode;
+	Ptr<SiotApplication> m_relNode;
 
 };
 
