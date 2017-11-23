@@ -7,6 +7,9 @@
 
 #include "cwor-relationship.h"
 
+#include "ns3/siot-application.h"
+
+
 namespace ns3
 {
 

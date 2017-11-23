@@ -16,8 +16,6 @@
 namespace ns3
 {
 
-class SiotApplication;
-
 class CworRelationship: public Relationship
 {
 public:
