@@ -13,7 +13,7 @@ def build(bld):
     module = bld.create_ns3_module('siot', ['internet'])
     module.use.append("NEO4J")
     module.source = [
-      	'model/relationship.cc',
+      	'model/relationship/relationship.cc',
     	'model/siot-application.cc',
         ]
 
@@ -25,7 +25,7 @@ def build(bld):
     headers = bld(features='ns3header')
     headers.module = 'siot'
     headers.source = [
-		'model/relationship.h',
+		'model/relationship/relationship.h',
         'model/siot-application.h',
         ]
 
