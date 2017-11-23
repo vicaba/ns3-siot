@@ -11,14 +11,14 @@
 #include "ns3/core-module.h"
 #include "ns3/application.h"
 
-#include "ns3/a.h"
+#include "ns3/relationship.h"
 
 namespace ns3 {
 
 class Socket;
 class Address;
 
-class A;
+class Relationship;
 
 class SiotApplication: public Application
 {
@@ -32,12 +32,12 @@ public:
 	virtual ~SiotApplication();
 	//void SetServiceProfile(Ptr<ServiceProfile>);
 	//const Ptr<const ServiceProfile> GetProfile() const;
-	void AddCworRelationship(const Ptr<A>);
-	void AddSorRelationship(const Ptr<A>);
-	const std::list<Ptr<A>> GetCworRelationships();
-	const std::list<Ptr<A>> GetSorRelationships();
+	void AddCworRelationship(const Ptr<Relationship>);
+	void AddSorRelationship(const Ptr<Relationship>);
+	const std::list<Ptr<Relationship>> GetCworRelationships();
+	const std::list<Ptr<Relationship>> GetSorRelationships();
 
-	typedef void (* RelationshipAddedCallback)(Ptr<const A>, const SiotApplication&);
+	typedef void (* RelationshipAddedCallback)(Ptr<const Relationship>, const SiotApplication&);
 
 protected:
 	virtual void
@@ -49,7 +49,7 @@ private:
 	StartApplication(void);
 	virtual void
 	StopApplication(void);
-	void NotifyRelationshipAdded(Ptr<const A>);
+	void NotifyRelationshipAdded(Ptr<const Relationship>);
 
 	/**
 	 * \brief Handle a packet reception.
@@ -64,11 +64,11 @@ private:
 	Ptr<Socket> m_socket; //!< IPv4 Socket
 	Ptr<Socket> m_socket6; //!< IPv6 Socket
 	Address m_local; //!< local multicast address
-	std::list<Ptr<A>> m_cworRelationships;
-	std::list<Ptr<A>> m_sorRelationships;
+	std::list<Ptr<Relationship>> m_cworRelationships;
+	std::list<Ptr<Relationship>> m_sorRelationships;
 	//Ptr<ServiceProfile> m_serviceProfile;
 
-	ns3::TracedCallback<Ptr<const A>, const SiotApplication&> m_relationshipAddedTrace;
+	ns3::TracedCallback<Ptr<const Relationship>, const SiotApplication&> m_relationshipAddedTrace;
 };
 
 

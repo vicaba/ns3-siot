@@ -73,29 +73,29 @@ void SiotApplication::StopApplication() {}
 
 void SiotApplication::HandleRead(Ptr<Socket> socket){}
 
-void SiotApplication::AddCworRelationship(const Ptr<A> rel)
+void SiotApplication::AddCworRelationship(const Ptr<Relationship> rel)
 {
 	this->m_cworRelationships.push_front(rel);
 	this->NotifyRelationshipAdded(rel);
 }
 
-void SiotApplication::AddSorRelationship(const Ptr<A> rel)
+void SiotApplication::AddSorRelationship(const Ptr<Relationship> rel)
 {
 	this->m_sorRelationships.push_front(rel);
 	this->NotifyRelationshipAdded(rel);
 }
 
-const std::list<Ptr<A>> SiotApplication::GetCworRelationships()
+const std::list<Ptr<Relationship>> SiotApplication::GetCworRelationships()
 {
 	return this->m_cworRelationships;
 }
 
-const std::list<Ptr<A>> SiotApplication::GetSorRelationships()
+const std::list<Ptr<Relationship>> SiotApplication::GetSorRelationships()
 {
 	return this->m_sorRelationships;
 }
 
-void SiotApplication::NotifyRelationshipAdded(Ptr< const A> rel)
+void SiotApplication::NotifyRelationshipAdded(Ptr< const Relationship> rel)
 {
 	this->m_relationshipAddedTrace(rel, *this);
 }
