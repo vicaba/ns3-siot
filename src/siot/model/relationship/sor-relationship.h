@@ -21,7 +21,8 @@ class SiotApplication;
 class SorRelationship: public Relationship
 {
 public:
-	SorRelationship(Ptr<SiotApplication>);
+	//SorRelationship(Ptr<SiotApplication>);
+	SorRelationship();
 	virtual ~SorRelationship();
 	virtual const RelationshipType GetType() const;
 };

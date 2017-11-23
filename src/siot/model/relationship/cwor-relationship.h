@@ -22,7 +22,8 @@ class SiotApplication;
 class CworRelationship: public Relationship
 {
 public:
-	CworRelationship(Ptr<SiotApplication>);
+	//CworRelationship(Ptr<SiotApplication>);
+	CworRelationship();
 	virtual ~CworRelationship();
 	const RelationshipType GetType() const;
 

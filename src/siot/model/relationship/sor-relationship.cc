@@ -10,9 +10,14 @@
 namespace ns3
 {
 
-SorRelationship::SorRelationship(Ptr<SiotApplication> rel): Relationship(rel)
+/*SorRelationship::SorRelationship(Ptr<SiotApplication> rel): Relationship(rel)
 {
 	// TODO Auto-generated constructor stub
+
+}*/
+
+SorRelationship::SorRelationship()
+{
 
 }
 

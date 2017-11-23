@@ -29,9 +29,10 @@ class Relationship: public Object
 {
 public:
 	static std::string RelationshipTypeToString(RelationshipType);
-	Relationship(Ptr<SiotApplication>);
+	//Relationship(Ptr<SiotApplication>);
+	Relationship();
 	virtual ~Relationship();
-	Ptr<SiotApplication> GetRelatedTo() const;
+	//Ptr<SiotApplication> GetRelatedTo() const;
 	virtual const RelationshipType GetType() const = 0;
 
 protected:

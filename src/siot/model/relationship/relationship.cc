@@ -29,18 +29,23 @@ std::string Relationship::RelationshipTypeToString(RelationshipType rel)
 	}
 }
 
-Relationship::Relationship(Ptr<SiotApplication> rel)
+/*Relationship::Relationship(Ptr<SiotApplication> rel)
 {
 	this->m_relNode = rel;
-}
+}*/
 
+Relationship::Relationship()
+{
+
+}
 
 Relationship::~Relationship()
 {
+	//m_relNode = 0;
 }
 
-Ptr<SiotApplication> Relationship::GetRelatedTo() const {
-	return this->m_relNode.lock();
-}
+/*Ptr<SiotApplication> Relationship::GetRelatedTo() const {
+	return this->m_relNode;
+}*/
 
 } /* namespace ns3 */
