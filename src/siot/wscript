@@ -13,14 +13,8 @@ def build(bld):
     module = bld.create_ns3_module('siot', ['internet'])
     module.use.append("NEO4J")
     module.source = [
-      	'model/pcg/pcg-application.cc',
-    	'model/relationship/relationship.cc',
-    	'model/relationship/cwor-relationship.cc',
-    	'model/relationship/sor-relationship.cc',
-    	'model/service-profile/profile-bag.cc',
-    	'model/service-profile/service-profile.cc',
-        'model/siot-application.cc',
-        'helper/siot-application-helper.cc',
+      	'model/a.cc',
+    	'model/siot-application.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('siot')
@@ -31,15 +25,8 @@ def build(bld):
     headers = bld(features='ns3header')
     headers.module = 'siot'
     headers.source = [
-		'model/pcg/pcg-application.h',
-        'model/relationship/relationship-module.h',
-        'model/relationship/relationship.h',
-        'model/relationship/cwor-relationship.h',
-    	'model/relationship/sor-relationship.h',
-    	'model/service-profile/profile-bag.h',
-    	'model/service-profile/service-profile.h',
+		'model/a.h',
         'model/siot-application.h',
-        'helper/siot-application-helper.h',
         ]
 
     if bld.env.ENABLE_EXAMPLES:
