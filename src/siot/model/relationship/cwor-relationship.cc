@@ -21,8 +21,8 @@ CworRelationship::~CworRelationship()
 	// TODO Auto-generated destructor stub
 }
 
-const RelationshipType CworRelationship::GetType() const {
-	return RelationshipType::CWOR;
+const std::string CworRelationship::GetType() const {
+	return "cwor";
 }
 
 } /* namespace ns3 */

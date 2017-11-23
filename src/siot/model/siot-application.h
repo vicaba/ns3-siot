@@ -8,6 +8,7 @@
 #ifndef SRC_SIOT_MODEL_SIOT_APPLICATION_H_
 #define SRC_SIOT_MODEL_SIOT_APPLICATION_H_
 
+
 #include "ns3/core-module.h"
 #include "ns3/application.h"
 
@@ -20,6 +21,7 @@ class Socket;
 class Address;
 
 class Relationship;
+class CworRelationship;
 
 class SiotApplication: public Application
 {
