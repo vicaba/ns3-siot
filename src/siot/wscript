@@ -14,6 +14,7 @@ def build(bld):
     module.use.append("NEO4J")
     module.source = [
       	'model/relationship/relationship.cc',
+      	'model/relationship/cwor-relationship.cc',
     	'model/siot-application.cc',
         ]
 
@@ -26,6 +27,7 @@ def build(bld):
     headers.module = 'siot'
     headers.source = [
 		'model/relationship/relationship.h',
+		'model/relationship/cwor-relationship.h',
         'model/siot-application.h',
         ]
 

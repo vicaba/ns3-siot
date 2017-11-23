@@ -73,7 +73,7 @@ void SiotApplication::StopApplication() {}
 
 void SiotApplication::HandleRead(Ptr<Socket> socket){}
 
-void SiotApplication::AddCworRelationship(const Ptr<Relationship> rel)
+void SiotApplication::AddCworRelationship(const Ptr<CworRelationship> rel)
 {
 	this->m_cworRelationships.push_front(rel);
 	this->NotifyRelationshipAdded(rel);
@@ -85,7 +85,7 @@ void SiotApplication::AddSorRelationship(const Ptr<Relationship> rel)
 	this->NotifyRelationshipAdded(rel);
 }
 
-const std::list<Ptr<Relationship>> SiotApplication::GetCworRelationships()
+const std::list<Ptr<CworRelationship>> SiotApplication::GetCworRelationships()
 {
 	return this->m_cworRelationships;
 }
