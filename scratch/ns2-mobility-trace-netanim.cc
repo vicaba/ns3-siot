@@ -230,6 +230,33 @@ static std::vector<std::unordered_map<std::string, std::string>> ReadProfileCsv(
  }
  */
 
+/*
+static void TraceNodeRelationship(Ptr<SiotApplication> serv1, Ptr<Relationship> rel, double atDistance, neo4j_connection_t *connection)
+{
+	neo4j_map_entry_t node1Id = neo4j_map_entry("node1Id",
+			neo4j_int(serv1->GetNode()->GetId()));
+	neo4j_map_entry_t node2Id = neo4j_map_entry("node2Id",
+			neo4j_int(rel->GetRelatedTo()->GetNode()->GetId()));
+	std::string relType = Relationship::RelationshipTypeToString(rel->GetType());
+	//neo4j_map_entry_t relType = neo4j_map_entry("relType",
+		//	neo4j_string(Relationship::RelationshipTypeToString(rel->GetType())));
+
+	std::vector<neo4j_map_entry_t> vParams = {node1Id, node2Id};
+
+	neo4j_result_stream_t *results = neo4j_run(
+			connection,
+			"OPTIONAL MATCH (n:Node {id: {node1Id}}), (m:Node {id: {node2Id}}) CREATE (n)-[r:REL {relT: {relType}]->(m)",
+			neo4j_map(vParams.data(), vParams.size())
+			);
+
+
+
+
+	//MATCH (n:Node {id: 1}), (m:Node {id: 2}) CREATE (n)-[r:REL {relT: "SOR"}]->(m) RETURN n,r,m
+
+}
+*/
+
 static void RelationshipAdded(neo4j_connection_t *connection,
 		Ptr<const Relationship> rel, const SiotApplication& thisNode) {
 	auto sp = thisNode.GetProfile();
