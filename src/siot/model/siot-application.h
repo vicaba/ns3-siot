@@ -40,7 +40,7 @@ public:
 	const std::list<Ptr<CworRelationship>> GetCworRelationships();
 	const std::list<Ptr<SorRelationship>> GetSorRelationships();
 
-	typedef void (* RelationshipAddedCallback)(Ptr<const Relationship>, const SiotApplication&);
+	typedef void (* RelationshipAddedCallback)(Ptr<const Relationship>, Ptr<const SiotApplication>);
 
 protected:
 	virtual void
@@ -71,7 +71,7 @@ private:
 	std::list<Ptr<SorRelationship>> m_sorRelationships;
 	Ptr<ServiceProfile> m_serviceProfile;
 
-	ns3::TracedCallback<Ptr<const Relationship>, const SiotApplication&> m_relationshipAddedTrace;
+	ns3::TracedCallback<Ptr<const Relationship>, Ptr<const SiotApplication>> m_relationshipAddedTrace;
 };
 
 

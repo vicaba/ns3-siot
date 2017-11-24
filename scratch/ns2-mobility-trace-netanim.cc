@@ -230,9 +230,10 @@ static std::vector<std::unordered_map<std::string, std::string>> ReadProfileCsv(
  }
  */
 
-/*
-static void TraceNodeRelationship(Ptr<SiotApplication> serv1, Ptr<Relationship> rel, double atDistance, neo4j_connection_t *connection)
+
+static void TraceNodeRelationship(Ptr<const SiotApplication> serv1, Ptr<const Relationship> rel, neo4j_connection_t *connection)
 {
+/*
 	neo4j_map_entry_t node1Id = neo4j_map_entry("node1Id",
 			neo4j_int(serv1->GetNode()->GetId()));
 	neo4j_map_entry_t node2Id = neo4j_map_entry("node2Id",
@@ -253,15 +254,17 @@ static void TraceNodeRelationship(Ptr<SiotApplication> serv1, Ptr<Relationship> 
 
 
 	//MATCH (n:Node {id: 1}), (m:Node {id: 2}) CREATE (n)-[r:REL {relT: "SOR"}]->(m) RETURN n,r,m
-
-}
 */
 
+}
+
+
 static void RelationshipAdded(neo4j_connection_t *connection,
-		Ptr<const Relationship> rel, const SiotApplication& thisNode) {
-	auto sp = thisNode.GetProfile();
+		Ptr<const Relationship> rel, Ptr<const SiotApplication> thisNode) {
+	auto sp = thisNode->GetProfile();
 	NS_LOG_DEBUG(
-			"Relationship profile: " << *(rel->GetRelatedTo()->GetProfile()));
+			"Relationship profile: " << rel->GetRelatedTo()->GetProfile());
+	TraceNodeRelationship(thisNode, rel, connection);
 
 }
 

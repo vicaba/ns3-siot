@@ -21,6 +21,7 @@
 #include "ns3/socket-factory.h"
 #include "ns3/packet.h"
 #include "ns3/uinteger.h"
+#include "ns3/ptr.h"
 
 namespace ns3 {
 
@@ -107,7 +108,7 @@ const std::list<Ptr<SorRelationship>> SiotApplication::GetSorRelationships()
 
 void SiotApplication::NotifyRelationshipAdded(Ptr< const Relationship> rel)
 {
-	this->m_relationshipAddedTrace(rel, *this);
+	this->m_relationshipAddedTrace(rel, this);
 }
 
 } /* namespace ns3 */
