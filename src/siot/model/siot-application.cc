@@ -108,7 +108,7 @@ const std::list<Ptr<SorRelationship>> SiotApplication::GetSorRelationships()
 
 void SiotApplication::NotifyRelationshipAdded(Ptr< const Relationship> rel)
 {
-	this->m_relationshipAddedTrace(rel, this);
+	this->m_relationshipAddedTrace(this, rel);
 }
 
 } /* namespace ns3 */

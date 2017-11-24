@@ -260,7 +260,7 @@ static void TraceNodeRelationship(Ptr<const SiotApplication> serv1, Ptr<const Re
 
 
 static void RelationshipAdded(neo4j_connection_t *connection,
-		Ptr<const Relationship> rel, Ptr<const SiotApplication> thisNode) {
+		Ptr<const SiotApplication> thisNode, Ptr<const Relationship> rel) {
 	auto sp = thisNode->GetProfile();
 	NS_LOG_DEBUG(
 			"Relationship profile: " << rel->GetRelatedTo()->GetProfile());
