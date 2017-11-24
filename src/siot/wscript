@@ -16,6 +16,8 @@ def build(bld):
       	'model/relationship/relationship.cc',
       	'model/relationship/cwor-relationship.cc',
       	'model/relationship/sor-relationship.cc',
+      	'model/service-profile/profile-bag.cc',
+      	'model/service-profile/service-profile.cc',
     	'model/siot-application.cc',
         ]
 
@@ -30,6 +32,8 @@ def build(bld):
 		'model/relationship/relationship.h',
 		'model/relationship/cwor-relationship.h',
 		'model/relationship/sor-relationship.h',
+      	'model/service-profile/profile-bag.h',
+      	'model/service-profile/service-profile.h',
         'model/siot-application.h',
         ]
 
