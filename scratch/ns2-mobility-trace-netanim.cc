@@ -256,7 +256,6 @@ static void NodeContact(NodeContainer *nodes, std::ofstream *os) {
 			Ptr<SiotApplication> serv2 = DynamicCast<SiotApplication>(
 					node2->GetApplication(siotApplicationIndex));
 
-
 			double distanceBetweenNodes = DistanceBetweenNodes(node1, node2);
 
 			if (distanceBetweenNodes <= 10
@@ -278,11 +277,12 @@ static void NodeContact(NodeContainer *nodes, std::ofstream *os) {
 			os);
 }
 
-static void TraceNodesInitialPositionInNeo4j(neo4j_connection_t *connection, ApplicationContainer &appContainer)
-{
+static void TraceNodesInitialPositionInNeo4j(neo4j_connection_t *connection,
+		ApplicationContainer &appContainer) {
 	//Add nodes to neo4j database
 	for (unsigned int i = 0; i < appContainer.GetN(); i++) {
-		neo4j_map_entry_t nodeId = neo4j_map_entry("nodeId", neo4j_int(appContainer.Get(i)->GetNode()->GetId()));
+		neo4j_map_entry_t nodeId = neo4j_map_entry("nodeId",
+				neo4j_int(appContainer.Get(i)->GetNode()->GetId()));
 
 		neo4j_result_stream_t *results = neo4j_run(connection,
 				"CREATE (n:Node {id:{nodeId}})", neo4j_map(&nodeId, 1));
