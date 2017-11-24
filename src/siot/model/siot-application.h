@@ -14,14 +14,12 @@
 
 #include "ns3/relationship.h"
 #include "ns3/cwor-relationship.h"
+#include "ns3/sor-relationship.h"
 
 namespace ns3 {
 
 class Socket;
 class Address;
-
-class Relationship;
-class CworRelationship;
 
 class SiotApplication: public Application
 {
@@ -36,9 +34,9 @@ public:
 	//void SetServiceProfile(Ptr<ServiceProfile>);
 	//const Ptr<const ServiceProfile> GetProfile() const;
 	void AddCworRelationship(const Ptr<CworRelationship>);
-	void AddSorRelationship(const Ptr<Relationship>);
+	void AddSorRelationship(const Ptr<SorRelationship>);
 	const std::list<Ptr<CworRelationship>> GetCworRelationships();
-	const std::list<Ptr<Relationship>> GetSorRelationships();
+	const std::list<Ptr<SorRelationship>> GetSorRelationships();
 
 	typedef void (* RelationshipAddedCallback)(Ptr<const Relationship>, const SiotApplication&);
 
@@ -68,7 +66,7 @@ private:
 	Ptr<Socket> m_socket6; //!< IPv6 Socket
 	Address m_local; //!< local multicast address
 	std::list<Ptr<CworRelationship>> m_cworRelationships;
-	std::list<Ptr<Relationship>> m_sorRelationships;
+	std::list<Ptr<SorRelationship>> m_sorRelationships;
 	//Ptr<ServiceProfile> m_serviceProfile;
 
 	ns3::TracedCallback<Ptr<const Relationship>, const SiotApplication&> m_relationshipAddedTrace;
