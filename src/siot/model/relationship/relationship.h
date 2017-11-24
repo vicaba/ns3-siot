@@ -24,7 +24,7 @@ public:
 		POR, CLOR, CWOR, OOR, SOR
 	};
 
-	//static std::string RelationshipTypeToString(Relationship::Type);
+	static std::string RelationshipTypeToString(Relationship::Type);
 	Relationship(Ptr<SiotApplication>);
 	virtual ~Relationship();
 	Ptr<SiotApplication> GetRelatedTo() const;

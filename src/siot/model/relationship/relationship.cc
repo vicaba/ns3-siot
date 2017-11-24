@@ -13,24 +13,24 @@
 namespace ns3
 {
 
-/*std::string Relationship::RelationshipTypeToString(RelationshipType rel)
+std::string Relationship::RelationshipTypeToString(Relationship::Type rel)
 {
 	switch (rel)
 	{
-	case RelationshipType::POR:
-		return "Parental Object Relationship";
-	case RelationshipType::CLOR:
-		return "Co-Location Object Relationship";
-	case RelationshipType::CWOR:
-		return "Co-Work Object Relationship";
-	case RelationshipType::OOR:
-		return "Ownership Object Relationship";
-	case RelationshipType::SOR:
-		return "Social Object Relationship";
+	case Relationship::Type::POR:
+		return "POR";
+	case Relationship::Type::CLOR:
+		return "CLOR";
+	case Relationship::Type::CWOR:
+		return "CLOR";
+	case Relationship::Type::OOR:
+		return "CLOR";
+	case Relationship::Type::SOR:
+		return "CLOR";
 	default:
-		return "Invalid Relationship";
+		return "None";
 	}
-}*/
+}
 
 Relationship::Relationship(Ptr<SiotApplication> rel)
 {

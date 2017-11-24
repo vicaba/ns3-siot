@@ -233,16 +233,16 @@ static std::vector<std::unordered_map<std::string, std::string>> ReadProfileCsv(
 
 static void TraceNodeRelationship(Ptr<const SiotApplication> serv1, Ptr<const Relationship> rel, neo4j_connection_t *connection)
 {
-/*
+
 	neo4j_map_entry_t node1Id = neo4j_map_entry("node1Id",
 			neo4j_int(serv1->GetNode()->GetId()));
 	neo4j_map_entry_t node2Id = neo4j_map_entry("node2Id",
 			neo4j_int(rel->GetRelatedTo()->GetNode()->GetId()));
 	std::string relType = Relationship::RelationshipTypeToString(rel->GetType());
-	//neo4j_map_entry_t relType = neo4j_map_entry("relType",
-		//	neo4j_string(Relationship::RelationshipTypeToString(rel->GetType())));
+	neo4j_map_entry_t relT = neo4j_map_entry("relType",
+			neo4j_string(relType.c_str()));
 
-	std::vector<neo4j_map_entry_t> vParams = {node1Id, node2Id};
+	std::vector<neo4j_map_entry_t> vParams = {node1Id, node2Id, relT};
 
 	neo4j_result_stream_t *results = neo4j_run(
 			connection,
@@ -250,12 +250,24 @@ static void TraceNodeRelationship(Ptr<const SiotApplication> serv1, Ptr<const Re
 			neo4j_map(vParams.data(), vParams.size())
 			);
 
+	if (results == NULL) {
+		neo4j_perror(stderr, errno, "Failed to run statement");
+	}
 
+	neo4j_result_t *result = neo4j_fetch_next(results);
+	if (result == NULL) {
+		neo4j_perror(stderr, errno, "Failed to fetch result");
+	}
 
+	neo4j_value_t value = neo4j_result_field(result, 0);
+	char buf[128];
+	printf("%s\n", neo4j_tostring(value, buf, sizeof(buf)));
+
+	neo4j_close_results(results);
+
+	exit(EXIT_SUCCESS);
 
 	//MATCH (n:Node {id: 1}), (m:Node {id: 2}) CREATE (n)-[r:REL {relT: "SOR"}]->(m) RETURN n,r,m
-*/
-
 }
 
 
