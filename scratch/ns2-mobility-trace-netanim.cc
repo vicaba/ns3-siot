@@ -278,6 +278,32 @@ static void NodeContact(NodeContainer *nodes, std::ofstream *os) {
 			os);
 }
 
+static void TraceNodesInitialPositionInNeo4j(neo4j_connection_t *connection, ApplicationContainer &appContainer)
+{
+	//Add nodes to neo4j database
+	for (unsigned int i = 0; i < appContainer.GetN(); i++) {
+		neo4j_map_entry_t nodeId = neo4j_map_entry("nodeId", neo4j_int(appContainer.Get(i)->GetNode()->GetId()));
+
+		neo4j_result_stream_t *results = neo4j_run(connection,
+				"CREATE (n:Node {id:{nodeId}})", neo4j_map(&nodeId, 1));
+		if (results == NULL) {
+			neo4j_perror(stderr, errno, "Failed to run statement");
+		}
+
+		neo4j_result_t *result = neo4j_fetch_next(results);
+		if (result == NULL) {
+			neo4j_perror(stderr, errno, "Failed to fetch result");
+		}
+
+		neo4j_value_t value = neo4j_result_field(result, 0);
+		char buf[128];
+		printf("%s\n", neo4j_tostring(value, buf, sizeof(buf)));
+
+		neo4j_close_results(results);
+
+	}
+}
+
 // Example to use ns2 traces file in ns3
 int main(int argc, char *argv[]) {
 	std::string animFile;
@@ -355,28 +381,7 @@ int main(int argc, char *argv[]) {
 		return EXIT_FAILURE;
 	}
 
-	//Add nodes to neo4j database
-	for (unsigned int i = 0; i < stas.GetN(); i++) {
-		neo4j_map_entry_t nodeId = neo4j_map_entry("nodeId", neo4j_int(stas.Get(i)->GetId()));
-
-		neo4j_result_stream_t *results = neo4j_run(connection,
-				"CREATE (n:Node {id:{nodeId}})", neo4j_map(&nodeId, 1));
-		if (results == NULL) {
-			neo4j_perror(stderr, errno, "Failed to run statement");
-		}
-
-		neo4j_result_t *result = neo4j_fetch_next(results);
-		if (result == NULL) {
-			neo4j_perror(stderr, errno, "Failed to fetch result");
-		}
-
-		neo4j_value_t value = neo4j_result_field(result, 0);
-		char buf[128];
-		printf("%s\n", neo4j_tostring(value, buf, sizeof(buf)));
-
-		neo4j_close_results(results);
-
-	}
+	TraceNodesInitialPositionInNeo4j(connection, appContainer);
 
 	for (unsigned int i = 0; i < stas.GetN(); i++) {
 		Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication>(
