@@ -73,6 +73,16 @@ void SiotApplication::StopApplication() {}
 
 void SiotApplication::HandleRead(Ptr<Socket> socket){}
 
+void SiotApplication::SetServiceProfile(Ptr<ServiceProfile> sp)
+{
+	this->m_serviceProfile = sp;
+}
+
+const Ptr<const ServiceProfile> SiotApplication::GetProfile() const
+{
+	return this->m_serviceProfile;
+}
+
 void SiotApplication::AddCworRelationship(const Ptr<CworRelationship> rel)
 {
 	this->m_cworRelationships.push_front(rel);

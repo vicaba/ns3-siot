@@ -16,6 +16,8 @@
 #include "ns3/cwor-relationship.h"
 #include "ns3/sor-relationship.h"
 
+#include "ns3/service-profile.h"
+
 namespace ns3 {
 
 class Socket;
@@ -31,8 +33,8 @@ public:
 	static TypeId GetTypeId(void);
 	SiotApplication();
 	virtual ~SiotApplication();
-	//void SetServiceProfile(Ptr<ServiceProfile>);
-	//const Ptr<const ServiceProfile> GetProfile() const;
+	void SetServiceProfile(Ptr<ServiceProfile>);
+	const Ptr<const ServiceProfile> GetProfile() const;
 	void AddCworRelationship(const Ptr<CworRelationship>);
 	void AddSorRelationship(const Ptr<SorRelationship>);
 	const std::list<Ptr<CworRelationship>> GetCworRelationships();
@@ -67,7 +69,7 @@ private:
 	Address m_local; //!< local multicast address
 	std::list<Ptr<CworRelationship>> m_cworRelationships;
 	std::list<Ptr<SorRelationship>> m_sorRelationships;
-	//Ptr<ServiceProfile> m_serviceProfile;
+	Ptr<ServiceProfile> m_serviceProfile;
 
 	ns3::TracedCallback<Ptr<const Relationship>, const SiotApplication&> m_relationshipAddedTrace;
 };
