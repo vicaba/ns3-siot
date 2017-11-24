@@ -15,6 +15,7 @@ def build(bld):
     module.source = [
       	'model/relationship/relationship.cc',
       	'model/relationship/cwor-relationship.cc',
+      	'model/relationship/sor-relationship.cc',
     	'model/siot-application.cc',
         ]
 
@@ -28,6 +29,7 @@ def build(bld):
     headers.source = [
 		'model/relationship/relationship.h',
 		'model/relationship/cwor-relationship.h',
+		'model/relationship/sor-relationship.h',
         'model/siot-application.h',
         ]
 

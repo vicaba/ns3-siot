@@ -8,10 +8,10 @@
 #ifndef RELATIONSHIP_CWOR_RELATIONSHIP_H_
 #define RELATIONSHIP_CWOR_RELATIONSHIP_H_
 
+#include "ns3/relationship.h"
+
 #include "ns3/core-module.h"
 #include "ns3/network-module.h"
-
-#include "ns3/relationship.h"
 
 namespace ns3
 {
@@ -21,8 +21,7 @@ class CworRelationship: public Relationship
 public:
 	CworRelationship(Ptr<SiotApplication>);
 	virtual ~CworRelationship();
-	virtual const std::string GetType() const;
-
+	virtual const Relationship::Type GetType() const;
 
 };
 
