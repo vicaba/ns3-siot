@@ -19,6 +19,7 @@ def build(bld):
       	'model/service-profile/profile-bag.cc',
       	'model/service-profile/service-profile.cc',
     	'model/siot-application.cc',
+		'helper/siot-application-helper.cc',
         ]
 
     module_test = bld.create_ns3_module_test_library('siot')
@@ -35,6 +36,7 @@ def build(bld):
       	'model/service-profile/profile-bag.h',
       	'model/service-profile/service-profile.h',
         'model/siot-application.h',
+		'helper/siot-application-helper.h',
         ]
 
     if bld.env.ENABLE_EXAMPLES:
