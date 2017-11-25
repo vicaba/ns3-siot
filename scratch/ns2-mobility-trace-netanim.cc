@@ -246,7 +246,7 @@ static void TraceNodeRelationship(Ptr<const SiotApplication> serv1, Ptr<const Re
 
 	neo4j_result_stream_t *results = neo4j_run(
 			connection,
-			"OPTIONAL MATCH (n:Node {id: {node1Id}}), (m:Node {id: {node2Id}}) CREATE (n)-[r:REL {relT: {relType}]->(m)",
+			"OPTIONAL MATCH (n:Node {id: {node1Id}}), (m:Node {id: {node2Id}}) CREATE (n)-[r:REL {relT: {relType}}]->(m)",
 			neo4j_map(vParams.data(), vParams.size())
 			);
 
