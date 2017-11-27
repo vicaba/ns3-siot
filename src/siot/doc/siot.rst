@@ -10,8 +10,6 @@ Example Module Documentation
    ============= Subsection (#.#.#)
    ############# Paragraph (no number)
 
-Required c++ standard = C++14. Transition to C++17 to remove experimental features.
-
 This is a suggested outline for adding new module documentation to |ns3|.
 See ``src/click/doc/click.rst`` for an example.
 
@@ -57,6 +55,10 @@ into more advanced topics.
 Building New Module
 ===================
 
+The minumim required c++ standard is C++14. This standard is hardcoded in
+the main wscript. We will move to C++17 to remove experimental features.
+
+
 Include this subsection only if there are special build instructions or
 platform limitations.
 
@@ -85,7 +87,31 @@ in additional sections, as needed.
 Examples
 ========
 
-What examples using this new code are available?  Describe them here.
+One of the examples in this module uses Neo4j as the backend. We recomend using
+a dockerized container of Neo4j and  `tmpfs <https://www.jamescoyle.net/how-to/943-create-a-ram-disk-in-linux>`_
+(RAM partition) to speed up disk operations.
+For example, you could create a ram filesystem in a directory 
+``mount -t tmpfs -o size=5g tmpfs $HOME/neo4j/data`` .
+
+And point dockerized Neo4j volume to that filesystem.
+
+.. code-block:: bash
+::
+
+   docker run \
+   --publish=7474:7474 --publish=7687:7687 \
+   --volume=$HOME/neo4j/data:/data \
+   neo4j
+.. code-block:: none
+
+Example queries:
+
+.. code-block:: neo4j
+::
+
+   MATCH (n:Node {id:3})-[r]->(m:Node) RETURN n,r,m
+.. code-block:: none
+
 
 Troubleshooting
 ===============
