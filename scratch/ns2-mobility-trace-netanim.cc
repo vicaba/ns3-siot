@@ -71,7 +71,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("SiotSim");
 
 static int siotApplicationIndex = 0; // index of siot-server in nodes
-static int proximityCheckInterval = 10; // seconds
+static int proximityCheckInterval = 5; // seconds
 
 static unsigned int WriteProfileHeadersToCsv(std::ostream &os, Ptr<Node> node) {
 
@@ -239,14 +239,17 @@ static void TraceNodeRelationship(Ptr<const SiotApplication> serv1, Ptr<const Re
 	neo4j_map_entry_t node2Id = neo4j_map_entry("node2Id",
 			neo4j_int(rel->GetRelatedTo()->GetNode()->GetId()));
 	std::string relType = Relationship::RelationshipTypeToString(rel->GetType());
-	neo4j_map_entry_t relT = neo4j_map_entry("relType",
+	neo4j_map_entry_t relT = neo4j_map_entry("relT",
 			neo4j_string(relType.c_str()));
+	double simTime = Simulator::Now().GetSeconds();
+	neo4j_map_entry_t simT = neo4j_map_entry("simT",
+			neo4j_int(simTime));
 
-	std::vector<neo4j_map_entry_t> vParams = {node1Id, node2Id, relT};
+	std::vector<neo4j_map_entry_t> vParams = {node1Id, node2Id, relT, simT};
 
 	neo4j_result_stream_t *results = neo4j_run(
 			connection,
-			"OPTIONAL MATCH (n:Node {id: {node1Id}}), (m:Node {id: {node2Id}}) CREATE (n)-[r:REL {relT: {relType}}]->(m)",
+			"OPTIONAL MATCH (n:Node {id: {node1Id}}), (m:Node {id: {node2Id}}) CREATE (n)-[r:REL {relT: {relT}, simT: {simT}}]->(m)",
 			neo4j_map(vParams.data(), vParams.size())
 			);
 
