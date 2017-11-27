@@ -71,7 +71,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("SiotSim");
 
 static int siotApplicationIndex = 0; // index of siot-server in nodes
-static int proximityCheckInterval = 3; // seconds
+static int proximityCheckInterval = 10; // seconds
 
 static unsigned int WriteProfileHeadersToCsv(std::ostream &os, Ptr<Node> node) {
 
@@ -265,7 +265,7 @@ static void TraceNodeRelationship(Ptr<const SiotApplication> serv1, Ptr<const Re
 
 	neo4j_close_results(results);
 
-	exit(EXIT_SUCCESS);
+	//exit(EXIT_SUCCESS);
 
 	//MATCH (n:Node {id: 1}), (m:Node {id: 2}) CREATE (n)-[r:REL {relT: "SOR"}]->(m) RETURN n,r,m
 }
@@ -417,7 +417,7 @@ int main(int argc, char *argv[]) {
 
 	/* use NEO4J_INSECURE when connecting to disable TLS */
 	neo4j_connection_t *connection = neo4j_connect(
-			"neo4j://neo4j:neo@localhost:7687", NULL, NEO4J_INSECURE);
+			"neo4j://neo4j:neo4@localhost:7687", NULL, NEO4J_INSECURE);
 	if (connection == NULL) {
 		neo4j_perror(stderr, errno, "Connection failed");
 		return EXIT_FAILURE;
