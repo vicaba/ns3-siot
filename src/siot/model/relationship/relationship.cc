@@ -22,11 +22,11 @@ std::string Relationship::RelationshipTypeToString(Relationship::Type rel)
 	case Relationship::Type::CLOR:
 		return "CLOR";
 	case Relationship::Type::CWOR:
-		return "CLOR";
+		return "CWOR";
 	case Relationship::Type::OOR:
-		return "CLOR";
+		return "OOR";
 	case Relationship::Type::SOR:
-		return "CLOR";
+		return "SOR";
 	default:
 		return "None";
 	}
