@@ -39,6 +39,7 @@ Relationship::Relationship(Ptr<SiotApplication> rel)
 
 Relationship::~Relationship()
 {
+
 }
 
 Ptr<SiotApplication> Relationship::GetRelatedTo() const {

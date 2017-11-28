@@ -5,8 +5,8 @@
  *      Author: vcaballero
  */
 
-#ifndef SRC_SIOT_MODEL_SIOT_APPLICATION_H_
-#define SRC_SIOT_MODEL_SIOT_APPLICATION_H_
+#ifndef SRC_SIOT_SIOT_APPLICATION_H_
+#define SRC_SIOT_SIOT_APPLICATION_H_
 
 
 #include "ns3/core-module.h"
@@ -17,6 +17,8 @@
 #include "ns3/sor-relationship.h"
 
 #include "ns3/service-profile.h"
+
+#include "ns3/mobility-adjacency.h"
 
 namespace ns3 {
 
@@ -43,8 +45,7 @@ public:
 	typedef void (* RelationshipAddedCallback)(Ptr<const SiotApplication>, Ptr<const Relationship>);
 
 protected:
-	virtual void
-	DoDispose(void);
+	virtual void DoDispose (void);
 
 private:
 
@@ -70,6 +71,7 @@ private:
 	std::list<Ptr<CworRelationship>> m_cworRelationships;
 	std::list<Ptr<SorRelationship>> m_sorRelationships;
 	Ptr<ServiceProfile> m_serviceProfile;
+	//MobilityAdjacency m_mobilityAdjacency;
 
 	ns3::TracedCallback<Ptr<const SiotApplication>, Ptr<const Relationship>> m_relationshipAddedTrace;
 };

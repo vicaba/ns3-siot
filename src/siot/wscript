@@ -19,6 +19,7 @@ def build(bld):
       	'model/service-profile/profile-bag.cc',
       	'model/service-profile/service-profile.cc',
     	'model/siot-application.cc',
+    	'model/siot-application-mobility.cc',
 		'helper/siot-application-helper.cc',
         ]
 
@@ -36,6 +37,7 @@ def build(bld):
       	'model/service-profile/profile-bag.h',
       	'model/service-profile/service-profile.h',
         'model/siot-application.h',
+    	'model/siot-application-mobility.h',
 		'helper/siot-application-helper.h',
         ]
 

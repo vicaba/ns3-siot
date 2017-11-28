@@ -9,7 +9,6 @@
 #define NODE_PROFILE_H_
 
 #include <unordered_map>
-#include <iterator>
 
 #include "ns3/core-module.h"
 

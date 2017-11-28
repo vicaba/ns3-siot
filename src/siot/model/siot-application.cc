@@ -65,6 +65,7 @@ SiotApplication::~SiotApplication()
 void SiotApplication::DoDispose(void)
 {
 	NS_LOG_FUNCTION(this);
+
 	Application::DoDispose();
 }
 
