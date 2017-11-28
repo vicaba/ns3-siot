@@ -16,6 +16,13 @@ SiotApplicationMobility::SiotApplicationMobility(uint32_t range, Ptr<SiotApplica
 	this->m_app = app;
 }
 
+void SiotApplicationMobility::DoDispose (void)
+{
+	this->m_app = 0;
+	Application::DoDispose();
+}
+
+
 SiotApplicationMobility::~SiotApplicationMobility() {
 	// TODO Auto-generated destructor stub
 }
@@ -28,6 +35,9 @@ std::vector<Ptr<Node>> SiotApplicationMobility::GetInRange()
 
 bool SiotApplicationMobility::IsNodeInRange(Ptr<Node>)
 {
+
+
+
 	return true;
 }
 

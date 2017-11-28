@@ -28,6 +28,10 @@ public:
 	typedef void (* NodeEntersRange)(Ptr<const SiotApplication>, Ptr<const Node>);
 	typedef void (* NodeLeavesRange)(Ptr<const SiotApplication>, Ptr<const Node>);
 
+protected:
+
+	  virtual void DoDispose (void);
+
 private:
 
 	bool IsNodeInRange(Ptr<Node>);
