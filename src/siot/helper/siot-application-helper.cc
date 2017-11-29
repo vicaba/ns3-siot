@@ -34,9 +34,9 @@ SiotApplicationHelper::SiotApplicationHelper (uint16_t port)
   SetAttribute ("Port", UintegerValue (port));
 }
 
-void 
+void
 SiotApplicationHelper::SetAttribute (
-  std::string name, 
+  std::string name,
   const AttributeValue &value)
 {
   m_factory.Set (name, value);
@@ -74,6 +74,12 @@ SiotApplicationHelper::InstallPriv (Ptr<Node> node) const
   Ptr<SiotApplication> siot = DynamicCast<SiotApplication>(app);
   node->AddApplication (app);
 
+
+  Ptr<MobilityModel> mobilityModel = node->GetObject<MobilityModel>();
+  if (mobilityModel != 0) {
+	  Ptr<SiotApplicationMobility> siotMobility = CreateObject<SiotApplicationMobility>(10, siot, mobilityModel);
+	  node->AddApplication(siotMobility);
+  }
   return app;
 }
 
@@ -90,9 +96,9 @@ UdpEchoClientHelper::UdpEchoClientHelper (Address address)
   SetAttribute ("RemoteAddress", AddressValue (address));
 }
 
-void 
+void
 UdpEchoClientHelper::SetAttribute (
-  std::string name, 
+  std::string name,
   const AttributeValue &value)
 {
   m_factory.Set (name, value);
