@@ -56,8 +56,7 @@ std::vector<Ptr<Node>> SiotApplicationMobility::GetInRange() {
 
 	}
 
-	std::vector<Ptr<Node>> vec = { };
-	return vec;
+	return inRangeVector;
 }
 
 std::tuple<bool, double> SiotApplicationMobility::IsNodeInRange(
