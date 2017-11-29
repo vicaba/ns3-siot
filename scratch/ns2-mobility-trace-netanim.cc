@@ -368,6 +368,12 @@ TraceNodesInitialPositionInNeo4j (neo4j_connection_t *connection,
     }
 }
 
+static Ptr<MobilityModel>
+GetMobilityModelFromApplication(Ptr<Application> app)
+{
+  return app->GetNode()->GetObject<MobilityModel>();
+}
+
 // Example to use ns2 traces file in ns3
 int
 main (int argc, char *argv[])
@@ -451,12 +457,17 @@ main (int argc, char *argv[])
 
   TraceNodesInitialPositionInNeo4j (connection, appContainer);
 
+  std::vector<Ptr<const MobilityModel>> vm;
+  vm.resize(appContainer.GetN());
+  std::transform(appContainer.Begin(), appContainer.End(), vm.begin(), GetMobilityModelFromApplication);
+
   for (unsigned int i = 0; i < stas.GetN (); i++)
     {
       Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication> (
 	  stas.Get (i)->GetApplication (siotApplicationIndex));
       Ptr<SiotApplicationMobility> serv1m = DynamicCast<SiotApplicationMobility> (
 	  stas.Get (i)->GetApplication (siotApplicationMobilityIndex));
+      serv1m->Watch(vm);
       // NS_LOG_UNCOND("Mobility: " << serv1m);
       serv1->TraceConnectWithoutContext ("RelationshipAdded",
 					 MakeBoundCallback (&RelationshipAdded, connection));
