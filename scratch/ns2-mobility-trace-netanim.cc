@@ -1,7 +1,6 @@
-/* -*-  Mode: C++; c-file-style: "gnu"; indent-tabs-mode:nil; -*- */
+/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
- * Copyright (c) 2007 INRIA
- *               2009,2010 Contributors
+ * Copyright (c) 2017 La Salle - Universitat Ramon Llull
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -16,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Martín Giachino <martin.giachino@gmail.com>
+ * Author: Víctor Caballero <vcaballero@salleurl.edu>
  *
  *
  * This example demonstrates the use of Ns2MobilityHelper class to work with mobility.
