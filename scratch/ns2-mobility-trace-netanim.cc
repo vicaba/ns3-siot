@@ -72,6 +72,7 @@ using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("SiotSim");
 
 static int siotApplicationIndex = 0; // index of siot-server in nodes
+static int siotApplicationMobilityIndex = 1; // index of siot-server in nodes
 static int proximityCheckInterval = 5; // seconds
 
 static unsigned int
@@ -463,6 +464,9 @@ main (int argc, char *argv[])
     {
       Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication> (
 	  stas.Get (i)->GetApplication (siotApplicationIndex));
+      Ptr<SiotApplicationMobility> serv1m = DynamicCast<SiotApplicationMobility> (
+	  stas.Get (i)->GetApplication (siotApplicationMobilityIndex));
+      // NS_LOG_UNCOND("Mobility: " << serv1m);
       serv1->TraceConnectWithoutContext ("RelationshipAdded",
 					 MakeBoundCallback (&RelationshipAdded, connection));
     }
