@@ -56,9 +56,9 @@ public:
   ~SiotApplicationMobility ();
 
   typedef void
-  (*NodeEntersRangeCallback) (Ptr<const SiotApplication>, Ptr<const MobilityModel>);
+  (*NodeEntersRangeCallback) (Ptr<SiotApplication>, Ptr<const MobilityModel>);
   typedef void
-  (*NodeLeavesRangeCallback) (Ptr<const SiotApplication>, Ptr<const MobilityModel>);
+  (*NodeLeavesRangeCallback) (Ptr<SiotApplication>, Ptr<const MobilityModel>);
 
 protected:
 
@@ -86,8 +86,8 @@ private:
   Ptr<SiotApplication> m_app;
   Ptr<MobilityModel> m_mobilityModel;
 
-  ns3::TracedCallback<Ptr<const SiotApplication>, Ptr<const MobilityModel>> m_nodeEntersRangeTrace;
-  ns3::TracedCallback<Ptr<const SiotApplication>, Ptr<const MobilityModel>> m_nodeLeavesRangeTrace;
+  ns3::TracedCallback<Ptr<SiotApplication>, Ptr<const MobilityModel>> m_nodeEntersRangeTrace;
+  ns3::TracedCallback<Ptr<SiotApplication>, Ptr<const MobilityModel>> m_nodeLeavesRangeTrace;
 
 };
 

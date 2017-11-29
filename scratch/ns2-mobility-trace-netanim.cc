@@ -312,9 +312,11 @@ DistanceBetweenNodes (Ptr<Node> node1, Ptr<Node> node2)
 */
 
 static void
-NodeEntersRange(Ptr<const SiotApplication> app, Ptr<const MobilityModel> node)
+NodeEntersRange(Ptr<SiotApplication> app, Ptr<const MobilityModel> node)
 {
+  Ptr<SorRelationship> rel = CreateObject<SorRelationship>(DynamicCast<SiotApplication>(node->GetObject<Node>()->GetApplication(siotApplicationIndex)));
   NS_LOG_UNCOND("Node Enters Range: " << app->GetNode()->GetId() << "-> " << node->GetObject<Node>()->GetId());
+  app->AddSorRelationship(rel);
 }
 
 static void
