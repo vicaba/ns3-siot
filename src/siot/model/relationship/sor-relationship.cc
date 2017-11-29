@@ -9,23 +9,25 @@
 
 #include "ns3/siot-application.h"
 
-
 namespace ns3
 {
 
-SorRelationship::SorRelationship(Ptr<SiotApplication> rel): Relationship(rel)
+SorRelationship::SorRelationship (Ptr<SiotApplication> rel) :
+    Relationship (rel)
 {
-	// TODO Auto-generated constructor stub
+  // TODO Auto-generated constructor stub
 
 }
 
-SorRelationship::~SorRelationship()
+SorRelationship::~SorRelationship ()
 {
-	// TODO Auto-generated destructor stub
+  // TODO Auto-generated destructor stub
 }
 
-const Relationship::Type SorRelationship::GetType() const {
-	return Relationship::Type::SOR;
+const Relationship::Type
+SorRelationship::GetType () const
+{
+  return Relationship::Type::SOR;
 
 }
 

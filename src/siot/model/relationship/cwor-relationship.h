@@ -16,12 +16,14 @@
 namespace ns3
 {
 
-class CworRelationship: public Relationship
+class CworRelationship : public Relationship
 {
 public:
-	CworRelationship(Ptr<SiotApplication>);
-	virtual ~CworRelationship();
-	virtual const Relationship::Type GetType() const;
+  CworRelationship (Ptr<SiotApplication>);
+  virtual
+  ~CworRelationship ();
+  virtual const Relationship::Type
+  GetType () const;
 
 };
 

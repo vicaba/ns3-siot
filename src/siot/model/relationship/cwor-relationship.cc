@@ -9,23 +9,25 @@
 
 #include "ns3/siot-application.h"
 
-
 namespace ns3
 {
 
-CworRelationship::CworRelationship(Ptr<SiotApplication> rel): Relationship(rel)
+CworRelationship::CworRelationship (Ptr<SiotApplication> rel) :
+    Relationship (rel)
 {
-	// TODO Auto-generated constructor stub
+  // TODO Auto-generated constructor stub
 
 }
 
-CworRelationship::~CworRelationship()
+CworRelationship::~CworRelationship ()
 {
-	// TODO Auto-generated destructor stub
+  // TODO Auto-generated destructor stub
 }
 
-const Relationship::Type CworRelationship::GetType() const {
-	return Relationship::Type::CWOR;
+const Relationship::Type
+CworRelationship::GetType () const
+{
+  return Relationship::Type::CWOR;
 }
 
 } /* namespace ns3 */

@@ -16,16 +16,17 @@
 namespace ns3
 {
 
-class SorRelationship: public Relationship
+class SorRelationship : public Relationship
 {
 public:
-	SorRelationship(Ptr<SiotApplication>);
-	virtual ~SorRelationship();
-	virtual const Relationship::Type GetType() const;
+  SorRelationship (Ptr<SiotApplication>);
+  virtual
+  ~SorRelationship ();
+  virtual const Relationship::Type
+  GetType () const;
 };
 
 } /* namespace ns3 */
-
 
 #endif /* RELATIONSHIP_SOR_RELATIONSHIP_H_ */
 

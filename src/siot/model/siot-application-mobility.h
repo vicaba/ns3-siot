@@ -18,93 +18,112 @@
 #include "ns3/mobility-module.h"
 #include "ns3/application.h"
 
-namespace ns3 {
+namespace ns3
+{
 
 class SiotApplication;
 
-class SiotApplicationMobility: public Application {
+class SiotApplicationMobility : public Application
+{
 public:
 
-	/**
-	 * \brief Get the type ID.
-	 * \return the object TypeId
-	 */
-	static TypeId GetTypeId(void);
+  /**
+   * \brief Get the type ID.
+   * \return the object TypeId
+   */
+  static TypeId
+  GetTypeId (void);
 
-	SiotApplicationMobility(double range , Ptr<SiotApplication> app, Ptr<MobilityModel> mobilityModel);
+  SiotApplicationMobility (double range, Ptr<SiotApplication> app,
+			   Ptr<MobilityModel> mobilityModel);
 
-	/**
-	 *	\param nodes nodes to add to the watch list
-	 */
-	void Watch(std::vector<Ptr<const MobilityModel>>);
+  /**
+   *	\param nodes nodes to add to the watch list
+   */
+  void
+  Watch (std::vector<Ptr<const MobilityModel>>);
 
-	/**
-	 *	\returns the nodes that are currently in range
-	 *
-	 *	Calculates which nodes have entered or leaved range.
-	 *	Calls NodeEntersRange and NodeLeavesRange respectively.
-	 */
-	std::vector<Ptr<const MobilityModel>> GetInRange();
+  /**
+   *	\returns the nodes that are currently in range
+   *
+   *	Calculates which nodes have entered or leaved range.
+   *	Calls NodeEntersRange and NodeLeavesRange respectively.
+   */
+  std::vector<Ptr<const MobilityModel>>
+  GetInRange ();
 
-	virtual ~SiotApplicationMobility();
+  virtual
+  ~SiotApplicationMobility ();
 
-	typedef void (* NodeEntersRangeCallback)(Ptr<const SiotApplication>, Ptr<const MobilityModel>);
-	typedef void (* NodeLeavesRangeCallback)(Ptr<const SiotApplication>, Ptr<const MobilityModel>);
+  typedef void
+  (*NodeEntersRangeCallback) (Ptr<const SiotApplication>, Ptr<const MobilityModel>);
+  typedef void
+  (*NodeLeavesRangeCallback) (Ptr<const SiotApplication>, Ptr<const MobilityModel>);
 
 protected:
 
-	  virtual void DoDispose (void);
+  virtual void
+  DoDispose (void);
 
 private:
 
-	void NotifyEntersRange(Ptr<const MobilityModel>);
-	void NotifyLeavesRange(Ptr<const MobilityModel>);
+  void
+  NotifyEntersRange (Ptr<const MobilityModel>);
+  void
+  NotifyLeavesRange (Ptr<const MobilityModel>);
 
-	std::tuple<bool, double> IsNodeInRange(Ptr<const MobilityModel>);
-	bool hasNodeEnteredRange(Ptr<const MobilityModel>);
-	bool hasNodeLeavedRange(Ptr<const MobilityModel>);
+  std::tuple<bool, double>
+  IsNodeInRange (Ptr<const MobilityModel>);
+  bool
+  hasNodeEnteredRange (Ptr<const MobilityModel>);
+  bool
+  hasNodeLeavedRange (Ptr<const MobilityModel>);
 
-	double m_range;
-	std::unordered_map<std::uint32_t, Ptr<const MobilityModel>> m_watching;
-	std::set<uint32_t> m_inRange;
+  double m_range;
+  std::unordered_map<std::uint32_t, Ptr<const MobilityModel>> m_watching;
+  std::set<uint32_t> m_inRange;
 
-	Ptr<SiotApplication> m_app;
-	Ptr<MobilityModel> m_mobilityModel;
+  Ptr<SiotApplication> m_app;
+  Ptr<MobilityModel> m_mobilityModel;
 
-	ns3::TracedCallback<Ptr<const SiotApplication>, Ptr<const MobilityModel>> m_nodeEntersRangeTrace;
-	ns3::TracedCallback<Ptr<const SiotApplication>, Ptr<const MobilityModel>> m_nodeLeavesRangeTrace;
+  ns3::TracedCallback<Ptr<const SiotApplication>, Ptr<const MobilityModel>> m_nodeEntersRangeTrace;
+  ns3::TracedCallback<Ptr<const SiotApplication>, Ptr<const MobilityModel>> m_nodeLeavesRangeTrace;
 
 };
 
-template <typename Container>
-bool contains(Container const& c, typename Container::const_reference v) {
-  return std::find(c.begin(), c.end(), v) != c.end();
-}
+template<typename Container>
+  bool
+  contains (Container const& c, typename Container::const_reference v)
+  {
+    return std::find (c.begin (), c.end (), v) != c.end ();
+  }
 
 template<typename T>
-void remove(std::set<T> & v, const T & item)
-{
-	for (auto it = v.begin(); it != v.end(); /* "it" updated inside loop body */ )
-	{
-	    if ( *it == item )
-	    {
-	        // Erase the element matching the specified condition
-	        // from the associative container.
-	        it = v.erase(it);
+  void
+  remove (std::set<T> & v, const T & item)
+  {
+    for (auto it = v.begin (); it != v.end ();
+    /* "it" updated inside loop body */)
+      {
+	if (*it == item)
+	  {
+	    // Erase the element matching the specified condition
+	    // from the associative container.
+	    it = v.erase (it);
 
-	        // Note:
-	        // erase() returns an iterator to the element
-	        // that follows the last element removed,
-	        // so we can continue the "for" loop iteration from that position.
-	    }
-	    else
-	    {
-	        // Current element does _not_ satisfy erasing condition,
-	        // so we can just move on to the next element.
-	        ++it;
-	    }
-	}
-}
+	    // Note:
+	    // erase() returns an iterator to the element
+	    // that follows the last element removed,
+	    // so we can continue the "for" loop iteration from that position.
+	  }
+	else
+	  {
+	    // Current element does _not_ satisfy erasing condition,
+	    // so we can just move on to the next element.
+	    ++it;
+	  }
+      }
+  }
 
 } /* namespace ns3 */
 

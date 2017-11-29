@@ -26,134 +26,136 @@
 
 #include "ns3/siot-module.h"
 
-namespace ns3 {
-
-SiotApplicationHelper::SiotApplicationHelper (uint16_t port)
+namespace ns3
 {
-  m_factory.SetTypeId (SiotApplication::GetTypeId ());
-  SetAttribute ("Port", UintegerValue (port));
-}
 
-void
-SiotApplicationHelper::SetAttribute (
-  std::string name,
-  const AttributeValue &value)
-{
-  m_factory.Set (name, value);
-}
-
-ApplicationContainer
-SiotApplicationHelper::Install (Ptr<Node> node) const
-{
-  return ApplicationContainer (InstallPriv (node));
-}
-
-ApplicationContainer
-SiotApplicationHelper::Install (std::string nodeName) const
-{
-  Ptr<Node> node = Names::Find<Node> (nodeName);
-  return ApplicationContainer (InstallPriv (node));
-}
-
-ApplicationContainer
-SiotApplicationHelper::Install (NodeContainer c) const
-{
-  ApplicationContainer apps;
-  for (NodeContainer::Iterator i = c.Begin (); i != c.End (); ++i)
-    {
-      apps.Add (InstallPriv (*i));
-    }
-
-  return apps;
-}
-
-Ptr<Application>
-SiotApplicationHelper::InstallPriv (Ptr<Node> node) const
-{
-  Ptr<Application> app = m_factory.Create<SiotApplication> ();
-  Ptr<SiotApplication> siot = DynamicCast<SiotApplication>(app);
-  node->AddApplication (app);
-
-
-  Ptr<MobilityModel> mobilityModel = node->GetObject<MobilityModel>();
-  if (mobilityModel != 0) {
-	  Ptr<SiotApplicationMobility> siotMobility = CreateObject<SiotApplicationMobility>(10, siot, mobilityModel);
-	  node->AddApplication(siotMobility);
+  SiotApplicationHelper::SiotApplicationHelper (uint16_t port)
+  {
+    m_factory.SetTypeId (SiotApplication::GetTypeId ());
+    SetAttribute ("Port", UintegerValue (port));
   }
-  return app;
-}
 
-UdpEchoClientHelper::UdpEchoClientHelper (Address address, uint16_t port)
-{
-  m_factory.SetTypeId (UdpEchoClient::GetTypeId ());
-  SetAttribute ("RemoteAddress", AddressValue (address));
-  SetAttribute ("RemotePort", UintegerValue (port));
-}
+  void
+  SiotApplicationHelper::SetAttribute (std::string name,
+				       const AttributeValue &value)
+  {
+    m_factory.Set (name, value);
+  }
 
-UdpEchoClientHelper::UdpEchoClientHelper (Address address)
-{
-  m_factory.SetTypeId (UdpEchoClient::GetTypeId ());
-  SetAttribute ("RemoteAddress", AddressValue (address));
-}
+  ApplicationContainer
+  SiotApplicationHelper::Install (Ptr<Node> node) const
+  {
+    return ApplicationContainer (InstallPriv (node));
+  }
 
-void
-UdpEchoClientHelper::SetAttribute (
-  std::string name,
-  const AttributeValue &value)
-{
-  m_factory.Set (name, value);
-}
+  ApplicationContainer
+  SiotApplicationHelper::Install (std::string nodeName) const
+  {
+    Ptr<Node> node = Names::Find<Node> (nodeName);
+    return ApplicationContainer (InstallPriv (node));
+  }
 
-void
-UdpEchoClientHelper::SetFill (Ptr<Application> app, std::string fill)
-{
-  app->GetObject<UdpEchoClient>()->SetFill (fill);
-}
+  ApplicationContainer
+  SiotApplicationHelper::Install (NodeContainer c) const
+  {
+    ApplicationContainer apps;
+    for (NodeContainer::Iterator i = c.Begin (); i != c.End (); ++i)
+      {
+	apps.Add (InstallPriv (*i));
+      }
 
-void
-UdpEchoClientHelper::SetFill (Ptr<Application> app, uint8_t fill, uint32_t dataLength)
-{
-  app->GetObject<UdpEchoClient>()->SetFill (fill, dataLength);
-}
+    return apps;
+  }
 
-void
-UdpEchoClientHelper::SetFill (Ptr<Application> app, uint8_t *fill, uint32_t fillLength, uint32_t dataLength)
-{
-  app->GetObject<UdpEchoClient>()->SetFill (fill, fillLength, dataLength);
-}
+  Ptr<Application>
+  SiotApplicationHelper::InstallPriv (Ptr<Node> node) const
+  {
+    Ptr<Application> app = m_factory.Create<SiotApplication> ();
+    Ptr<SiotApplication> siot = DynamicCast<SiotApplication> (app);
+    node->AddApplication (app);
 
-ApplicationContainer
-UdpEchoClientHelper::Install (Ptr<Node> node) const
-{
-  return ApplicationContainer (InstallPriv (node));
-}
+    Ptr<MobilityModel> mobilityModel = node->GetObject<MobilityModel> ();
+    if (mobilityModel != 0)
+      {
+	Ptr<SiotApplicationMobility> siotMobility = CreateObject<
+	    SiotApplicationMobility> (10, siot, mobilityModel);
+	node->AddApplication (siotMobility);
+      }
+    return app;
+  }
 
-ApplicationContainer
-UdpEchoClientHelper::Install (std::string nodeName) const
-{
-  Ptr<Node> node = Names::Find<Node> (nodeName);
-  return ApplicationContainer (InstallPriv (node));
-}
+  UdpEchoClientHelper::UdpEchoClientHelper (Address address, uint16_t port)
+  {
+    m_factory.SetTypeId (UdpEchoClient::GetTypeId ());
+    SetAttribute ("RemoteAddress", AddressValue (address));
+    SetAttribute ("RemotePort", UintegerValue (port));
+  }
 
-ApplicationContainer
-UdpEchoClientHelper::Install (NodeContainer c) const
-{
-  ApplicationContainer apps;
-  for (NodeContainer::Iterator i = c.Begin (); i != c.End (); ++i)
-    {
-      apps.Add (InstallPriv (*i));
-    }
+  UdpEchoClientHelper::UdpEchoClientHelper (Address address)
+  {
+    m_factory.SetTypeId (UdpEchoClient::GetTypeId ());
+    SetAttribute ("RemoteAddress", AddressValue (address));
+  }
 
-  return apps;
-}
+  void
+  UdpEchoClientHelper::SetAttribute (std::string name,
+				     const AttributeValue &value)
+  {
+    m_factory.Set (name, value);
+  }
 
-Ptr<Application>
-UdpEchoClientHelper::InstallPriv (Ptr<Node> node) const
-{
-  Ptr<Application> app = m_factory.Create<UdpEchoClient> ();
-  node->AddApplication (app);
+  void
+  UdpEchoClientHelper::SetFill (Ptr<Application> app, std::string fill)
+  {
+    app->GetObject<UdpEchoClient> ()->SetFill (fill);
+  }
 
-  return app;
-}
+  void
+  UdpEchoClientHelper::SetFill (Ptr<Application> app, uint8_t fill,
+				uint32_t dataLength)
+  {
+    app->GetObject<UdpEchoClient> ()->SetFill (fill, dataLength);
+  }
+
+  void
+  UdpEchoClientHelper::SetFill (Ptr<Application> app, uint8_t *fill,
+				uint32_t fillLength, uint32_t dataLength)
+  {
+    app->GetObject<UdpEchoClient> ()->SetFill (fill, fillLength, dataLength);
+  }
+
+  ApplicationContainer
+  UdpEchoClientHelper::Install (Ptr<Node> node) const
+  {
+    return ApplicationContainer (InstallPriv (node));
+  }
+
+  ApplicationContainer
+  UdpEchoClientHelper::Install (std::string nodeName) const
+  {
+    Ptr<Node> node = Names::Find<Node> (nodeName);
+    return ApplicationContainer (InstallPriv (node));
+  }
+
+  ApplicationContainer
+  UdpEchoClientHelper::Install (NodeContainer c) const
+  {
+    ApplicationContainer apps;
+    for (NodeContainer::Iterator i = c.Begin (); i != c.End (); ++i)
+      {
+	apps.Add (InstallPriv (*i));
+      }
+
+    return apps;
+  }
+
+  Ptr<Application>
+  UdpEchoClientHelper::InstallPriv (Ptr<Node> node) const
+  {
+    Ptr<Application> app = m_factory.Create<UdpEchoClient> ();
+    node->AddApplication (app);
+
+    return app;
+  }
 
 } // namespace ns3
