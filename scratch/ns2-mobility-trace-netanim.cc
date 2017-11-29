@@ -301,6 +301,7 @@ RelationshipAdded (neo4j_connection_t *connection, Ptr<const SiotApplication> th
 
 }
 
+/*
 static double
 DistanceBetweenNodes (Ptr<Node> node1, Ptr<Node> node2)
 {
@@ -308,37 +309,27 @@ DistanceBetweenNodes (Ptr<Node> node1, Ptr<Node> node2)
   Ptr<MobilityModel> model2 = node2->GetObject<MobilityModel> ();
   return model1->GetDistanceFrom (model2);
 }
+*/
+
+static void
+NodeEntersRange(Ptr<const SiotApplication> app, Ptr<const MobilityModel> node)
+{
+  NS_LOG_UNCOND("Node Enters Range: " << app->GetNode()->GetId() << "-> " << node->GetObject<Node>()->GetId());
+}
 
 static void
 NodeContact (NodeContainer *nodes, std::ofstream *os)
 {
   int numberOfNodes = nodes->GetN ();
+
   for (int i = 0; i < numberOfNodes; i++)
     {
-      for (int j = 0; j < numberOfNodes; j++)
-	{
-	  Ptr<Node> node1 = nodes->Get (i);
-	  Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication> (
-	      node1->GetApplication (siotApplicationIndex));
+      Ptr<Node> node1 = nodes->Get (i);
+      Ptr<SiotApplicationMobility> serv1 = DynamicCast<SiotApplicationMobility> (
+	  node1->GetApplication (siotApplicationMobilityIndex));
 
-	  Ptr<Node> node2 = nodes->Get (j);
-	  Ptr<SiotApplication> serv2 = DynamicCast<SiotApplication> (
-	      node2->GetApplication (siotApplicationIndex));
+      serv1->GetInRange ();
 
-	  double distanceBetweenNodes = DistanceBetweenNodes (node1, node2);
-
-	  if (distanceBetweenNodes <= 10 && !(node1->GetId () == node2->GetId ()))
-	    {
-
-	      // Add node contact to serv1
-	      serv1->AddSorRelationship (Create<SorRelationship> (serv2));
-
-	      // Add node contact to serv2
-	      serv2->AddSorRelationship (Create<SorRelationship> (serv1));
-
-	    }
-
-	}
     }
 
   // Reschedule this operation
@@ -451,7 +442,7 @@ main (int argc, char *argv[])
 
   /* use NEO4J_INSECURE when connecting to disable TLS */
   neo4j_connection_t *connection = neo4j_connect ("neo4j://neo4j:neo4@localhost:7687", NULL,
-						  NEO4J_INSECURE);
+  NEO4J_INSECURE);
   if (connection == NULL)
     {
       neo4j_perror (stderr, errno, "Connection failed");
@@ -469,6 +460,8 @@ main (int argc, char *argv[])
       // NS_LOG_UNCOND("Mobility: " << serv1m);
       serv1->TraceConnectWithoutContext ("RelationshipAdded",
 					 MakeBoundCallback (&RelationshipAdded, connection));
+      serv1m->TraceConnectWithoutContext ("NodeEntersRange",
+					  MakeCallback (&NodeEntersRange));
     }
 
   // Open profile file to read node profiles from

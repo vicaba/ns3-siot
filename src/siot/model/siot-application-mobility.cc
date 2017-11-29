@@ -21,7 +21,7 @@ TypeId SiotApplicationMobility::GetTypeId(void)
 			TypeId("ns3::SiotApplicationMobility")
 			.SetParent<Application>()
 			.SetGroupName("Applications")
-			.AddTraceSource ("NodeEntersRasssnge",
+			.AddTraceSource ("NodeEntersRange",
 					"A node has entered physical range",
 					MakeTraceSourceAccessor (&SiotApplicationMobility::m_nodeEntersRangeTrace),
 					"ns3::SiotApplicationMobility::NodeEntersRangeCallback")
