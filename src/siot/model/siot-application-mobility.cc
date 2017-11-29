@@ -11,6 +11,27 @@
 
 namespace ns3 {
 
+NS_LOG_COMPONENT_DEFINE("SiotApplicationMobility");
+
+NS_OBJECT_ENSURE_REGISTERED(SiotApplicationMobility);
+
+TypeId SiotApplicationMobility::GetTypeId(void)
+{
+	static TypeId tid =
+			TypeId("ns3::SiotApplicationMobility")
+			.SetParent<Application>()
+			.SetGroupName("Applications")
+			.AddTraceSource ("NodeEntersRasssnge",
+					"A node has entered physical range",
+					MakeTraceSourceAccessor (&SiotApplicationMobility::m_nodeEntersRangeTrace),
+					"ns3::SiotApplicationMobility::NodeEntersRangeCallback")
+			.AddTraceSource ("NodeLeavesRange",
+					"A node has leaved physical range",
+					MakeTraceSourceAccessor (&SiotApplicationMobility::m_nodeLeavesRangeTrace),
+					"ns3::SiotApplicationMobility::NodeLeavesRangeCallback");
+	return tid;
+}
+
 SiotApplicationMobility::SiotApplicationMobility(double range,
 		Ptr<SiotApplication> app) {
 	this->m_range = range;
@@ -24,16 +45,7 @@ void SiotApplicationMobility::Watch(
 	}
 }
 
-void SiotApplicationMobility::DoDispose(void) {
-	this->m_app = 0;
-	Application::DoDispose();
-}
-
-SiotApplicationMobility::~SiotApplicationMobility() {
-	// TODO Auto-generated destructor stub
-}
-
-std::vector<Ptr<Node>> SiotApplicationMobility::GetInRange() {
+std::vector<Ptr<const MobilityModel>> SiotApplicationMobility::GetInRange() {
 
 	std::vector<Ptr<const MobilityModel>> inRangeVector;
 
@@ -77,6 +89,15 @@ void SiotApplicationMobility::NotifyEntersRange(Ptr<const MobilityModel> node) {
 
 void SiotApplicationMobility::NotifyLeavesRange(Ptr<const MobilityModel> node) {
 	this->m_nodeLeavesRangeTrace(m_app, node);
+}
+
+void SiotApplicationMobility::DoDispose(void) {
+	this->m_app = 0;
+	Application::DoDispose();
+}
+
+SiotApplicationMobility::~SiotApplicationMobility() {
+	// TODO Auto-generated destructor stub
 }
 
 } /* namespace ns3 */

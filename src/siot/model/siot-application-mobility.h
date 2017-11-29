@@ -24,13 +24,32 @@ class SiotApplication;
 
 class SiotApplicationMobility: public Application {
 public:
-	SiotApplicationMobility(double, Ptr<SiotApplication>);
-	void Watch(std::vector<Ptr<const MobilityModel>>);
-	virtual ~SiotApplicationMobility();
-	std::vector<Ptr<Node>> GetInRange();
 
-	typedef void (* NodeEntersRange)(Ptr<const SiotApplication>, Ptr<const MobilityModel>);
-	typedef void (* NodeLeavesRange)(Ptr<const SiotApplication>, Ptr<const MobilityModel>);
+	/**
+	 * \brief Get the type ID.
+	 * \return the object TypeId
+	 */
+	static TypeId GetTypeId(void);
+
+	SiotApplicationMobility(double, Ptr<SiotApplication>);
+
+	/**
+	 *	\param nodes nodes to add to the watch list
+	 */
+	void Watch(std::vector<Ptr<const MobilityModel>>);
+
+	/**
+	 *	\returns the nodes that are currently in range
+	 *
+	 *	Calculates which nodes have entered or leaved range.
+	 *	Calls NodeEntersRange and NodeLeavesRange respectively.
+	 */
+	std::vector<Ptr<const MobilityModel>> GetInRange();
+
+	virtual ~SiotApplicationMobility();
+
+	typedef void (* NodeEntersRangeCallback)(Ptr<const SiotApplication>, Ptr<const MobilityModel>);
+	typedef void (* NodeLeavesRangeCallback)(Ptr<const SiotApplication>, Ptr<const MobilityModel>);
 
 protected:
 
