@@ -302,21 +302,24 @@ RelationshipAdded (neo4j_connection_t *connection, Ptr<const SiotApplication> th
 }
 
 /*
-static double
-DistanceBetweenNodes (Ptr<Node> node1, Ptr<Node> node2)
-{
-  Ptr<MobilityModel> model1 = node1->GetObject<MobilityModel> ();
-  Ptr<MobilityModel> model2 = node2->GetObject<MobilityModel> ();
-  return model1->GetDistanceFrom (model2);
-}
-*/
+ static double
+ DistanceBetweenNodes (Ptr<Node> node1, Ptr<Node> node2)
+ {
+ Ptr<MobilityModel> model1 = node1->GetObject<MobilityModel> ();
+ Ptr<MobilityModel> model2 = node2->GetObject<MobilityModel> ();
+ return model1->GetDistanceFrom (model2);
+ }
+ */
 
 static void
-NodeEntersRange(Ptr<SiotApplication> app, Ptr<const MobilityModel> node)
+NodeEntersRange (Ptr<SiotApplication> app, Ptr<const MobilityModel> node)
 {
-  Ptr<SorRelationship> rel = CreateObject<SorRelationship>(DynamicCast<SiotApplication>(node->GetObject<Node>()->GetApplication(siotApplicationIndex)));
-  NS_LOG_UNCOND("Node Enters Range: " << app->GetNode()->GetId() << "-> " << node->GetObject<Node>()->GetId());
-  app->AddSorRelationship(rel);
+  Ptr<SorRelationship> rel = CreateObject<SorRelationship> (
+      DynamicCast<SiotApplication> (
+	  node->GetObject<Node> ()->GetApplication (siotApplicationIndex)));
+  NS_LOG_UNCOND(
+      "Node Enters Range: " << app->GetNode()->GetId() << "-> " << node->GetObject<Node>()->GetId());
+  app->AddSorRelationship (rel);
 }
 
 static void
@@ -371,9 +374,9 @@ TraceNodesInitialPositionInNeo4j (neo4j_connection_t *connection,
 }
 
 static Ptr<MobilityModel>
-GetMobilityModelFromApplication(Ptr<Application> app)
+GetMobilityModelFromApplication (Ptr<Application> app)
 {
-  return app->GetNode()->GetObject<MobilityModel>();
+  return app->GetNode ()->GetObject<MobilityModel> ();
 }
 
 // Example to use ns2 traces file in ns3
@@ -460,8 +463,9 @@ main (int argc, char *argv[])
   TraceNodesInitialPositionInNeo4j (connection, appContainer);
 
   std::vector<Ptr<const MobilityModel>> vm;
-  vm.resize(appContainer.GetN());
-  std::transform(appContainer.Begin(), appContainer.End(), vm.begin(), GetMobilityModelFromApplication);
+  vm.resize (appContainer.GetN ());
+  std::transform (appContainer.Begin (), appContainer.End (), vm.begin (),
+		  GetMobilityModelFromApplication);
 
   for (unsigned int i = 0; i < stas.GetN (); i++)
     {
@@ -469,12 +473,11 @@ main (int argc, char *argv[])
 	  stas.Get (i)->GetApplication (siotApplicationIndex));
       Ptr<SiotApplicationMobility> serv1m = DynamicCast<SiotApplicationMobility> (
 	  stas.Get (i)->GetApplication (siotApplicationMobilityIndex));
-      serv1m->Watch(vm);
+      serv1m->Watch (vm);
       // NS_LOG_UNCOND("Mobility: " << serv1m);
       serv1->TraceConnectWithoutContext ("RelationshipAdded",
 					 MakeBoundCallback (&RelationshipAdded, connection));
-      serv1m->TraceConnectWithoutContext ("NodeEntersRange",
-					  MakeCallback (&NodeEntersRange));
+      serv1m->TraceConnectWithoutContext ("NodeEntersRange", MakeCallback (&NodeEntersRange));
     }
 
   // Open profile file to read node profiles from
