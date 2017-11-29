@@ -31,7 +31,7 @@ public:
 	 */
 	static TypeId GetTypeId(void);
 
-	SiotApplicationMobility(double, Ptr<SiotApplication>);
+	SiotApplicationMobility(double range , Ptr<SiotApplication> app, Ptr<MobilityModel> mobilityModel);
 
 	/**
 	 *	\param nodes nodes to add to the watch list

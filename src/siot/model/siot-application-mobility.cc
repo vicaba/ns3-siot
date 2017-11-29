@@ -32,10 +32,14 @@ TypeId SiotApplicationMobility::GetTypeId(void)
 	return tid;
 }
 
-SiotApplicationMobility::SiotApplicationMobility(double range,
-		Ptr<SiotApplication> app) {
+SiotApplicationMobility::SiotApplicationMobility(
+		double range,
+		Ptr<SiotApplication> app,
+		Ptr<MobilityModel> mobilityModel
+		) {
 	this->m_range = range;
 	this->m_app = app;
+	this->m_mobilityModel = mobilityModel;
 }
 
 void SiotApplicationMobility::Watch(
