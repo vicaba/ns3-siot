@@ -25,7 +25,7 @@ main (int argc, char *argv[])
 
   /* use NEO4J_INSECURE when connecting to disable TLS */
   neo4j_connection_t *connection =
-          neo4j_connect("neo4j://neo4j:neo@localhost:7687", NULL, NEO4J_INSECURE);
+          neo4j_connect("neo4j://neo4j:neo4jx@localhost:7687", NULL, NEO4J_INSECURE);
   if (connection == NULL)
   {
       neo4j_perror(stderr, errno, "Connection failed");
@@ -33,7 +33,24 @@ main (int argc, char *argv[])
   }
 
   neo4j_result_stream_t *results =
-          neo4j_run(connection, "RETURN 'hello world'", neo4j_null);
+          neo4j_run(connection, "OPTIONAL MATCH (n:Node {id: {node1Id}}), (m:Node {id: {node2Id}}) MERGE (n)-[r:REL {relT: {relT}, simT: {simT}}]->(m)", neo4j_null);
+
+  if (results == NULL)
+  {
+      neo4j_perror(stderr, errno, "Failed to run statement");
+      return EXIT_FAILURE;
+  }
+
+  neo4j_result_t *result = neo4j_fetch_next(results);
+  if (result == NULL)
+  {
+      neo4j_perror(stderr, errno, "Failed to fetch result");
+      return EXIT_FAILURE;
+  }
+
+  neo4j_result_stream_t *results =
+          neo4j_run(connection, "OPTIONAL MATCH (n:Node {id: {node1Id}}), (m:Node {id: {node2Id}}) MERGE (n)-[r:REL {relT: {relT}, simT: {simT}}]->(m)", neo4j_null);
+
   if (results == NULL)
   {
       neo4j_perror(stderr, errno, "Failed to run statement");

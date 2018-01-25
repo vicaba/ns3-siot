@@ -265,7 +265,7 @@ TraceNodeRelationship (Ptr<const SiotApplication> serv1, Ptr<const Relationship>
   neo4j_result_stream_t *results =
       neo4j_run (
 	  connection,
-	  "OPTIONAL MATCH (n:Node {id: {node1Id}}), (m:Node {id: {node2Id}}) CREATE (n)-[r:REL {relT: {relT}, simT: {simT}}]->(m)",
+	  "OPTIONAL MATCH (n:Node {id: {node1Id}}), (m:Node {id: {node2Id}}) MERGE (n)-[r:REL {relT: {relT}, simT: {simT}}]->(m)",
 	  neo4j_map (vParams.data (), vParams.size ()));
 
   if (results == NULL)
@@ -384,7 +384,10 @@ main (int argc, char *argv[])
 {
   std::string animFile;
   std::string traceFile;
+
+  bool externalProfileFile = false;
   std::string profileFile;
+
   std::string logFile;
   std::string distanceLogFile;
   std::string outputProfilesFile;
@@ -398,13 +401,16 @@ main (int argc, char *argv[])
   // Parse command line attribute
   CommandLine cmd;
   cmd.AddValue ("traceFile", "Ns2 movement trace file", traceFile);
+
   cmd.AddValue ("profileFile", "Custom profile file", profileFile);
+
   cmd.AddValue ("nodeNum", "Number of nodes", nodeNum);
   cmd.AddValue ("duration", "Duration of Simulation", duration);
   cmd.AddValue ("logFile", "Log file", logFile);
   cmd.AddValue ("distanceLogFile", "Distance log file", distanceLogFile);
   cmd.AddValue ("animationFile", "Animation file", animFile);
   cmd.AddValue ("outputProfilesFile", "Profiles output", outputProfilesFile);
+
   cmd.Parse (argc, argv);
 
   // Check command line arguments
@@ -424,6 +430,11 @@ main (int argc, char *argv[])
 	      "NOTE 3: Duration must be a positive number. Note that you must know it before to be able to load it.\n\n";
 
       return 0;
+    }
+
+  if (profileFile != "")
+    {
+      externalProfileFile = true;
     }
 
   // Create Ns2MobilityHelper with the specified trace log file as parameter
@@ -451,7 +462,7 @@ main (int argc, char *argv[])
   neo4j_client_init ();
 
   /* use NEO4J_INSECURE when connecting to disable TLS */
-  neo4j_connection_t *connection = neo4j_connect ("neo4j://neo4j:neo4@localhost:7687", NULL,
+  neo4j_connection_t *connection = neo4j_connect ("neo4j://neo4j:neo4jx@localhost:7687", NULL,
   NEO4J_INSECURE);
   if (connection == NULL)
     {
@@ -479,33 +490,63 @@ main (int argc, char *argv[])
       serv1m->TraceConnectWithoutContext ("NodeEntersRange", MakeCallback (&NodeEntersRange));
     }
 
-  // Open profile file to read node profiles from
-  std::ifstream isProfile;
-  isProfile.open (profileFile.c_str ());
-
-  // Read node profiles
-  std::vector<std::unordered_map<std::string, std::string>> profiles = ReadProfileCsv (isProfile);
-
-  // Close profile file
-  isProfile.close ();
-
-  // Assign profiles to nodes
-  uint32_t stasSize = stas.GetN ();
-
-  // Add profiles to SiotApplications
-  for (unsigned int i = 0; i < stasSize; i++)
+  if (externalProfileFile)
     {
-      Vector3D pos = stas.Get (i)->GetObject<MobilityModel> ()->GetPosition ();
-      profiles.at (i).insert (
-	{ "x_pos", std::to_string (pos.x) });
-      profiles.at (i).insert (
-	{ "y_pos", std::to_string (pos.y) });
-      profiles.at (i).insert (
-	{ "z_pos", std::to_string (pos.z) });
-      Ptr<ServiceProfile> sp = CreateObject<ServiceProfile> ("energy_profile", profiles.at (i));
-      Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication> (
-	  stas.Get (i)->GetApplication (siotApplicationIndex));
-      serv1->SetServiceProfile (sp);
+      // Open profile file to read node profiles from
+      std::ifstream isProfile;
+      isProfile.open (profileFile.c_str ());
+
+      // Read node profiles
+      std::vector<std::unordered_map<std::string, std::string>> profiles = ReadProfileCsv (
+	  isProfile);
+
+      // Close profile file
+      isProfile.close ();
+
+      // Assign profiles to nodes
+      uint32_t stasSize = stas.GetN ();
+
+      // Add profiles to SiotApplications
+      for (unsigned int i = 0; i < stasSize; i++)
+	{
+	  Vector3D pos = stas.Get (i)->GetObject<MobilityModel> ()->GetPosition ();
+	  profiles.at (i).insert (
+	    { "x_pos", std::to_string (pos.x) });
+	  profiles.at (i).insert (
+	    { "y_pos", std::to_string (pos.y) });
+	  profiles.at (i).insert (
+	    { "z_pos", std::to_string (pos.z) });
+	  Ptr<ServiceProfile> sp = CreateObject<ServiceProfile> ("energy_profile", profiles.at (i));
+	  Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication> (
+	      stas.Get (i)->GetApplication (siotApplicationIndex));
+	  serv1->SetServiceProfile (sp);
+	}
+    }
+  else
+    {
+
+      std::vector<std::unordered_map<std::string, std::string>> profiles;
+      // Add initial position profile
+      // Assign profiles to nodes
+      uint32_t stasSize = stas.GetN ();
+
+      // Allocate space in profiles
+      profiles.reserve(stasSize);
+
+
+      // Add profiles to SiotApplications
+      for (unsigned int i = 0; i < stasSize; i++)
+	{
+	  Vector3D pos = stas.Get (i)->GetObject<MobilityModel> ()->GetPosition ();
+	  profiles.at (i).insert (
+	    { "x_pos", std::to_string (pos.x) });
+	  profiles.at (i).insert (
+	    { "y_pos", std::to_string (pos.y) });
+	  profiles.at (i).insert (
+	    { "z_pos", std::to_string (pos.z) });
+
+	}
+
     }
 
   // Open file to log profiles and positios of nodes
