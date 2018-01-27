@@ -265,7 +265,7 @@ TraceNodeRelationship (Ptr<const SiotApplication> serv1, Ptr<const Relationship>
   neo4j_result_stream_t *results =
       neo4j_run (
 	  connection,
-	  "OPTIONAL MATCH (n:Node {id: {node1Id}}), (m:Node {id: {node2Id}}) MERGE (n)-[r:REL {relT: {relT}, simT: {simT}}]->(m)",
+	  "OPTIONAL MATCH (n:Node {id: {node1Id}}), (m:Node {id: {node2Id}}) MERGE (n)-[r:REL {relT: {relT}, simT: {simT}}]-(m)",
 	  neo4j_map (vParams.data (), vParams.size ()));
 
   if (results == NULL)
@@ -432,7 +432,7 @@ main (int argc, char *argv[])
       return 0;
     }
 
-  if (profileFile != "")
+  if (profileFile != "none")
     {
       externalProfileFile = true;
     }
@@ -530,20 +530,25 @@ main (int argc, char *argv[])
       // Assign profiles to nodes
       uint32_t stasSize = stas.GetN ();
 
-      // Allocate space in profiles
-      profiles.reserve(stasSize);
-
-
       // Add profiles to SiotApplications
       for (unsigned int i = 0; i < stasSize; i++)
 	{
+	  std::unordered_map<std::string, std::string> map;
+
 	  Vector3D pos = stas.Get (i)->GetObject<MobilityModel> ()->GetPosition ();
-	  profiles.at (i).insert (
+	  map.insert (
 	    { "x_pos", std::to_string (pos.x) });
-	  profiles.at (i).insert (
+	  map.insert (
 	    { "y_pos", std::to_string (pos.y) });
-	  profiles.at (i).insert (
+	  map.insert (
 	    { "z_pos", std::to_string (pos.z) });
+
+	  profiles.push_back (map);
+
+	  Ptr<ServiceProfile> sp = CreateObject<ServiceProfile> ("energy_profile", profiles.at (i));
+	  Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication> (
+	      stas.Get (i)->GetApplication (siotApplicationIndex));
+	  serv1->SetServiceProfile (sp);
 
 	}
 
