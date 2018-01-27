@@ -138,6 +138,14 @@ To omit the node which is being tested (id == 3), we can add a ``WHERE`` clause.
    MATCH (n:Node {id:3})-[r*0..2]->(m:Node) WHERE m.id <> 3 RETURN count(distinct(m))
 .. code-block:: none
 
+Query for time and relationship hops
+
+.. code-block:: neo4j
+::
+
+   MATCH (n:Node {id:3})-[r*0..2]->(m:Node) WHERE all(rel in r WHERE rel.simT < 100) RETURN n,r,m
+.. code-block:: none
+
 
 Troubleshooting
 ===============
