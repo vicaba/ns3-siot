@@ -30,8 +30,6 @@
 
 #include "ns3/service-profile.h"
 
-#include "ns3/mobility-adjacency.h"
-
 namespace ns3
 {
 

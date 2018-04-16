@@ -143,108 +143,37 @@ getNextLineAndSplitIntoTokens (std::istream& str)
 }
 
 static std::vector<std::unordered_map<std::string, std::string>>
-ReadProfileCsv (std::istream& str)
-{
+ReadProfileCsv (std::istream& str) {
 
-  std::vector<std::unordered_map<std::string, std::string>> profile;
-  std::vector<std::string> headers;
+    std::vector<std::unordered_map<std::string, std::string>> profile;
+    std::vector<std::string> headers;
 
-  // Read Headers
-  if (str.good ())
-    {
-      headers = getNextLineAndSplitIntoTokens (str);
-    }
-  else
-    {
-      return profile;
+    // Read Headers
+    if (str.good()) {
+        headers = getNextLineAndSplitIntoTokens(str);
+    } else {
+        return profile;
     }
 
-  while (str.good ())
-    {
-      std::unordered_map<std::string, std::string> line;
-      std::vector<std::string> values = getNextLineAndSplitIntoTokens (str);
+    while (str.good()) {
+        std::unordered_map<std::string, std::string> line;
+        std::vector<std::string> values = getNextLineAndSplitIntoTokens(str);
 
-      if (headers.size () == values.size ())
-	{
-	  for (auto headerIt = headers.begin (), valueIt = values.begin ();
-	      headerIt != headers.end (); headerIt++, valueIt++)
-	    {
-	      line.insert (
-		{ *headerIt, *valueIt });
-	      NS_LOG_DEBUG("Reading Node profile... " << *headerIt << " : " << *valueIt);
-	    }
-	  profile.push_back (line);
-	}
+        if (headers.size() == values.size()) {
+            for (auto headerIt = headers.begin(), valueIt = values.begin();
+                 headerIt != headers.end(); headerIt++, valueIt++) {
+                line.insert(
+                        {*headerIt, *valueIt});
+                NS_LOG_DEBUG("Reading Node profile... " << *headerIt << " : " << *valueIt);
+            }
+            profile.push_back(line);
+        }
 
     }
 
-  return profile;
+    return profile;
 
 }
-
-/*
- static std::tuple<NodeContainer, NodeContainer> CreateCenters(double maxX,
- double maxY, NodeContainer& nodeContainer, uint16_t clusters)
- {
- // Calculate cluster boundaries
- std::vector<std::array<double, 6>> boundaries;
- NodeContainer clusterCenters;
-
- double baseX = maxX / clusters;
- double baseY = maxY / clusters;
-
- uint16_t xAxisLowerIndex = 0;
- uint16_t yAxisLowerIndex = 1;
- uint16_t xAxisUpperIndex = 2;
- uint16_t yAxisUpperIndex = 3;
- uint16_t xAxisCentroidIndex = 4;
- uint16_t yAxisCentroidIndex = 5;
-
- for (unsigned int i = 0; i < clusters; i++)
- {
-
- std::array<double, 6> quadrant;
-
- //Calculate region boundaries
-
- // Lower boundary
- quadrant[xAxisLowerIndex] = baseX * i;
- quadrant[yAxisLowerIndex] = baseY * i;
-
- // Upper boundary
- quadrant[xAxisUpperIndex] = baseX * (i + 1);
- quadrant[yAxisUpperIndex] = baseY * (i + 1);
-
- quadrant[xAxisCentroidIndex] = quadrant[xAxisLowerIndex]
- + ((quadrant[xAxisUpperIndex] - quadrant[xAxisLowerIndex]) / 2);
- quadrant[yAxisCentroidIndex] = quadrant[yAxisLowerIndex]
- + ((quadrant[yAxisUpperIndex] - quadrant[yAxisLowerIndex]) / 2);
-
- boundaries.push_back(quadrant);
-
- Ptr<PositionAllocator> pos = CreateObjectWithAttributes<
- RandomRectanglePositionAllocator>("X",
- StringValue(
- "ns3::ConstantRandomVariable[Constant="
- + std::to_string(quadrant[xAxisCentroidIndex])
- + "]"), "Y",
- StringValue(
- "ns3::ConstantRandomVariable[Constant="
- + std::to_string(quadrant[yAxisCentroidIndex])
- + "]"));
-
- Ptr<MobilityModel> mobility =
- CreateObject<ConstantPositionMobilityModel>();
- mobility->SetPosition(pos->GetNext());
- Ptr<Node> clusterCenter = CreateObject<Node>();
- clusterCenter->AggregateObject(mobility);
- clusterCenters.Add(clussecondterCenter);
- }
-
- return std::make_tuple(nodeContainer, clusterCenters);
-
- }
- */
 
 static void
 TraceNodeRelationship (Ptr<const SiotApplication> serv1, Ptr<const Relationship> rel,

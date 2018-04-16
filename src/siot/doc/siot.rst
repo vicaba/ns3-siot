@@ -5,10 +5,10 @@ Example Module Documentation
 .. highlight:: cpp
 
 .. heading hierarchy:
-   ------------- Chapter
-   ************* Section (#.#)
-   ============= Subsection (#.#.#)
-   ############# Paragraph (no number)
+------------- Chapter
+************* Section (#.#)
+============= Subsection (#.#.#)
+############# Paragraph (no number)
 
 This is a suggested outline for adding new module documentation to |ns3|.
 See ``src/click/doc/click.rst`` for an example.
@@ -106,10 +106,44 @@ And point dockerized Neo4j volume to that filesystem.
 
 Example queries:
 
+This query returns nodes their relationships directly related to Node with id == 3, including this node.
+
 .. code-block:: neo4j
 ::
 
    MATCH (n:Node {id:3})-[r]->(m:Node) RETURN n,r,m
+.. code-block:: none
+
+This query returns nodes their relationships directly (range 1) and indirectly (range 2) related to Node with id == 3, including this node (range 0).
+
+.. code-block:: neo4j
+::
+
+   MATCH (n:Node {id:3})-[r*0..2]->(m:Node) RETURN n,r,m
+.. code-block:: none
+
+In order to get the id of nodes related to node with id == 3, we can count them with ``count()`` and ``distinct()``.
+
+.. code-block:: neo4j
+::
+
+   MATCH (n:Node {id:3})-[r*0..2]->(m:Node) RETURN count(distinct(m))
+.. code-block:: none
+
+To omit the node which is being tested (id == 3), we can add a ``WHERE`` clause.
+
+.. code-block:: neo4j
+::
+
+   MATCH (n:Node {id:3})-[r*0..2]->(m:Node) WHERE m.id <> 3 RETURN count(distinct(m))
+.. code-block:: none
+
+Query for time and relationship hops
+
+.. code-block:: neo4j
+::
+
+   MATCH (n:Node {id:3})-[r*0..2]->(m:Node) WHERE all(rel in r WHERE rel.simT < 100) RETURN n,r,m
 .. code-block:: none
 
 
