@@ -74,12 +74,6 @@ static int siotApplicationIndex = 0; // index of siot-server in nodes
 static int siotApplicationMobilityIndex = 1; // index of siot-server in nodes
 static int proximityCheckInterval = 5; // seconds
 
-typedef struct StaticProfile {
-  int id;
-  std::string name;
-  Vector position;
-} Profile;
-
 static std::vector<std::string>
 getNextLineAndSplitIntoTokens (std::istream &str)
 {
@@ -103,11 +97,11 @@ getNextLineAndSplitIntoTokens (std::istream &str)
   return result;
 }
 
-static StaticProfile
+static Profile
 ReadCsvProfile (std::istream &str)
 {
 
-  StaticProfile profile;
+  Profile profile;
   std::vector<std::string> headers;
 
   // Read Headers
@@ -125,13 +119,16 @@ ReadCsvProfile (std::istream &str)
       std::vector<std::string> values = getNextLineAndSplitIntoTokens (str);
       // Dummy variable for stod
       std::string::size_type sz;
+      Vector position;
 
-      profile.id = stoi(values[0]);
-      profile.name = values[1];
-      profile.position.x = stod (values[2], &sz);
-      profile.position.y = stod (values[3], &sz);
+      position.x = stod (values[2], &sz);
+      position.y = stod (values[3], &sz);
 
-      NS_LOG_DEBUG("Reading Node profile... " << profile.name);
+      profile.SetId (stoi(values[0]));
+      profile.SetName (values[1]);
+      profile.SetInitialPosition (position);
+
+      NS_LOG_DEBUG("Reading Node profile... " << profile);
 
 
     }
@@ -372,77 +369,16 @@ main (int argc, char *argv[])
 
   if (externalProfileFile)
     {
-      // Open profile file to read node profiles from
-      std::ifstream isProfile;
-      isProfile.open (profileFile.c_str ());
 
-      // Read node profiles
-      std::vector<std::unordered_map<std::string, std::string>> profiles = ReadCsvProfile (
-          isProfile);
-
-      // Close profile file
-      isProfile.close ();
-
-      // Assign profiles to nodes
-      uint32_t stasSize = stas.GetN ();
-
-      // Add profiles to SiotApplications
-      for (unsigned int i = 0; i < stasSize; i++)
-        {
-          Vector3D pos = stas.Get (i)->GetObject<MobilityModel> ()->GetPosition ();
-          profiles.at (i).insert (
-              {"x_pos", std::to_string (pos.x)});
-          profiles.at (i).insert (
-              {"y_pos", std::to_string (pos.y)});
-          profiles.at (i).insert (
-              {"z_pos", std::to_string (pos.z)});
-          Ptr<ServiceProfile> sp = CreateObject<ServiceProfile> ("energy_profile", profiles.at (i));
-          Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication> (
-              stas.Get (i)->GetApplication (siotApplicationIndex));
-          serv1->SetServiceProfile (sp);
-        }
     }
   else
     {
-
-      std::vector<std::unordered_map<std::string, std::string>> profiles;
-      // Add initial position profile
-      // Assign profiles to nodes
-      uint32_t stasSize = stas.GetN ();
-
-      // Add profiles to SiotApplications
-      for (unsigned int i = 0; i < stasSize; i++)
-        {
-          std::unordered_map<std::string, std::string> map;
-
-          Vector3D pos = stas.Get (i)->GetObject<MobilityModel> ()->GetPosition ();
-          map.insert (
-              {"x_pos", std::to_string (pos.x)});
-          map.insert (
-              {"y_pos", std::to_string (pos.y)});
-          map.insert (
-              {"z_pos", std::to_string (pos.z)});
-
-          profiles.push_back (map);
-
-          Ptr<ServiceProfile> sp = CreateObject<ServiceProfile> ("energy_profile", profiles.at (i));
-          Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication> (
-              stas.Get (i)->GetApplication (siotApplicationIndex));
-          serv1->SetServiceProfile (sp);
-
-        }
 
     }
 
   // Open file to log profiles and positios of nodes
   std::ofstream osProfiles;
   osProfiles.open (outputProfilesFile.c_str ());
-
-  // Write headers
-  unsigned int headerCols = WriteProfileHeadersToCsv (osProfiles, stas.Get (0));
-
-  // Write profiles to csv
-  WriteProfileToCsv (osProfiles, stas, headerCols);
 
   // Close output profiles file
   osProfiles.close ();

@@ -29,27 +29,30 @@ namespace ns3
   class Profile {
 
    public:
+
     Profile ();
     virtual
     ~Profile ();
     void
-    SetId(int);
+    SetId(const int);
     void
-    SetName(std::string);
+    SetName(const std::string);
     void
-    SetPosition(Vector);
-    int
-    GetId();
-    std::string
-    GetName();
-    Vector
-    GetPosition();
+    SetInitialPosition(const Vector);
+    const int
+    GetId() const;
+    const std::string
+    GetName() const;
+    const Vector
+    GetInitialPosition() const;
+    friend std::ostream &
+    operator<< (std::ostream &outputStream, const Profile &p);
 
    private:
-    int id;
-    std::string name;
-    Vector initialPosition;
+    int m_id;
+    std::string m_name;
+    Vector m_initialPosition;
   };
 }
 
-#endif SRC_SIOT_MODEL_SERVICE_PROFILE_PROFILE_H_
+#endif

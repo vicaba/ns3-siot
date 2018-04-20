@@ -33,44 +33,46 @@ namespace ns3
   }
 
   void
-  Profile::SetId (int)
+  Profile::SetId (const int id)
   {
-
+    this->m_id = id;
   }
 
   void
-  Profile::SetName (std::string)
+  Profile::SetName (const std::string name)
   {
-
+    this->m_name = name;
   }
 
   void
-  Profile::SetPosition (ns3::Vector)
+  Profile::SetInitialPosition (const ns3::Vector position)
   {
-
+    this->m_initialPosition = position;
   }
 
-  int
-  Profile::GetId()
+  const int
+  Profile::GetId() const
   {
-
+    return this->m_id;
   }
 
-  std::string
-  Profile::GetName()
+  const std::string
+  Profile::GetName() const
   {
-
+    return this->m_name;
   }
 
-  Vector
-  Profile::GetPosition()
+  const Vector
+  Profile::GetInitialPosition() const
   {
-
+    return this->m_initialPosition;
   }
 
-/*ServiceProfile ProfileBag::DeleteProfile(const std::string, const std::string)
- {
- return this->m_bag.at("a");
- }*/
+  std::ostream &
+  operator<< (std::ostream &outputStream, const Profile &p)
+  {
+    outputStream << std::to_string ( p.GetId ()) << ", " << p.GetName () << ", " << std::to_string (this->m_initialPosition.x) << " " << std::to_string (this->m_initialPosition.y);
+    return outputStream;
+  }
 
 } /* namespace ns3 */
