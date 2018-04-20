@@ -146,6 +146,62 @@ Query for time and relationship hops
    MATCH (n:Node {id:3})-[r*0..2]->(m:Node) WHERE all(rel in r WHERE rel.simT < 100) RETURN n,r,m
 .. code-block:: none
 
+Using Neo4j Apoc with Gephi
+===========================
+
+In order to use Gephi's graph analysis capabilities and stream data from Neo4j to Gephi, use this tutorial: https://tbgraph.wordpress.com/2017/04/01/neo4j-to-gephi/
+
+
+A Neo44j image with Apoc installed can be created using the following template:
+
+
+.. code-block:: none
+::
+
+    FROM neo4j:3.3
+    MAINTAINER Clifford Anderson <anderson.clifford@gmail.com>
+
+    ENV APOC_URI https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/3.3.0.1/apoc-3.3.0.1-all.jar
+
+    RUN apk add --no-cache --quiet curl
+
+    RUN mv plugins /plugins \
+        && ln -s plugins /plugins
+
+    RUN curl --fail --silent --show-error --location --output apoc-3.3.0.1-all.jar $APOC_URI \
+        && mv apoc-3.3.0.1-all.jar /plugins
+
+    RUN apk del curl
+
+    EXPOSE 7474 7473 7687
+
+    CMD ["neo4j"]
+.. code-block:: none
+
+Remember to run the container (created from the image) within the host network (https://stackoverflow.com/questions/49901949/neo4j-and-gephi-graph-streaming-plugin-connection-refused/49904035#49904035)
+
+.. code-block:: bash
+::
+
+    docker run \
+    --publish=7474:7474 --publish=7687:7687 \
+    --net="host" \
+    --volume=$HOME/neo4j/data:/data \
+    -e NEO4J_dbms_security_procedures_unrestricted=apoc.\\\* \
+    neo4j_apoc:3.3
+.. code-block:: none
+
+
+.. code-block:: bash
+::
+
+   docker run \
+   --publish=7474:7474 --publish=7687:7687 \
+   --volume=$HOME/neo4j/data:/data \
+   -e NEO4J_dbms_security_procedures_unrestricted=apoc.\\\* \
+   neo4j_apoc:3.3
+.. code-block:: none
+
 
 Troubleshooting
 ===============
