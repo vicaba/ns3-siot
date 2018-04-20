@@ -112,7 +112,7 @@ This query returns nodes their relationships directly related to Node with id ==
 ::
 
    MATCH (n:Node {id:3})-[r]->(m:Node) RETURN n,r,m
-.. code-block:: none
+.. code-block::
 
 This query returns nodes their relationships directly (range 1) and indirectly (range 2) related to Node with id == 3, including this node (range 0).
 
