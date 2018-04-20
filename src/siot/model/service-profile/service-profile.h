@@ -18,8 +18,8 @@
  * Author: Víctor Caballero <vcaballero@salleurl.edu>
  */
 
-#ifndef NODE_PROFILE_H_
-#define NODE_PROFILE_H_
+#ifndef SRC_SIOT_MODEL_SERVICE_PROFILE_SERVICE_PROFILE_H_
+#define SRC_SIOT_MODEL_SERVICE_PROFILE_SERVICE_PROFILE_H_
 
 #include <unordered_map>
 
@@ -28,28 +28,27 @@
 namespace ns3
 {
 
-class ServiceProfile : public Object
-{
+    class ServiceProfile : public Object {
 
-public:
+     public:
 
-  ServiceProfile (std::string, std::unordered_map<std::string, std::string>);
-  virtual
-  ~ServiceProfile ();
-  std::unordered_map<std::string, std::string>
-  GetRaw () const;
-  friend std::ostream&
-  operator << (std::ostream& outputStream, const ServiceProfile& sp);
+      ServiceProfile (std::string, std::unordered_map<std::string, std::string>);
+      virtual
+      ~ServiceProfile ();
+      std::unordered_map<std::string, std::string>
+      GetRaw () const;
+      friend std::ostream &
+      operator<< (std::ostream &outputStream, const ServiceProfile &sp);
 
-private:
+     private:
 
-  std::vector<std::string>
-  GetValues () const;
+      std::vector<std::string>
+      GetValues () const;
 
-  std::string m_identifier;
-  std::unordered_map<std::string, std::string> m_raw;
+      std::string m_identifier;
+      std::unordered_map<std::string, std::string> m_raw;
 
-};
+    };
 
 } /* namespace ns3 */
 

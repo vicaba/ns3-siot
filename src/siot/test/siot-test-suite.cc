@@ -11,19 +11,18 @@
 using namespace ns3;
 
 // This is an example TestCase.
-class SiotTestCase1 : public TestCase
-{
-public:
+class SiotTestCase1 : public TestCase {
+ public:
   SiotTestCase1 ();
   virtual ~SiotTestCase1 ();
 
-private:
+ private:
   virtual void DoRun (void);
 };
 
 // Add some help text to this case to describe what it is intended to test
 SiotTestCase1::SiotTestCase1 ()
-  : TestCase ("Siot test case (does nothing)")
+    : TestCase ("Siot test case (does nothing)")
 {
 }
 
@@ -50,14 +49,13 @@ SiotTestCase1::DoRun (void)
 // and enables the TestCases to be run.  Typically, only the constructor for
 // this class must be defined
 //
-class SiotTestSuite : public TestSuite
-{
-public:
+class SiotTestSuite : public TestSuite {
+ public:
   SiotTestSuite ();
 };
 
 SiotTestSuite::SiotTestSuite ()
-  : TestSuite ("siot", UNIT)
+    : TestSuite ("siot", UNIT)
 {
   // TestDuration for TestCase can be QUICK, EXTENSIVE or TAKES_FOREVER
   AddTestCase (new SiotTestCase1, TestCase::QUICK);

@@ -74,53 +74,14 @@ static int siotApplicationIndex = 0; // index of siot-server in nodes
 static int siotApplicationMobilityIndex = 1; // index of siot-server in nodes
 static int proximityCheckInterval = 5; // seconds
 
-static unsigned int
-WriteProfileHeadersToCsv (std::ostream &os, Ptr<Node> node)
-{
-
-  std::unordered_map<std::string, std::string> profile = DynamicCast<SiotApplication> (
-      node->GetApplication (siotApplicationIndex))->GetProfile ()->GetRaw ();
-
-  for (auto it = profile.begin (); it != profile.end (); it++)
-    {
-      if (it == profile.begin ())
-	os << "nodeId," << it->first;
-      else
-	os << "," << it->first;
-    }
-  os << std::endl;
-  return profile.size ();
-
-}
-
-static void
-WriteProfileToCsv (std::ostream &os, NodeContainer &nodes, unsigned int headerColumns)
-{
-  uint32_t containerSize = nodes.GetN ();
-
-  for (unsigned int i = 0; i < containerSize; i++)
-    {
-      std::unordered_map<std::string, std::string> profile = DynamicCast<SiotApplication> (
-	  nodes.Get (i)->GetApplication (siotApplicationIndex))->GetProfile ()->GetRaw ();
-
-      NS_ASSERT_MSG(
-	  profile.size () == headerColumns,
-	  "Profile columns and header columns are not equal " << profile.size() << " != " << headerColumns);
-
-      for (auto it = profile.begin (); it != profile.end (); it++)
-	{
-	  if (it == profile.begin ())
-	    os << nodes.Get (i)->GetId () << "," << it->second;
-	  else
-	    os << "," << it->second;
-	}
-      os << std::endl;
-
-    }
-}
+typedef struct StaticProfile {
+  int id;
+  std::string name;
+  Vector position;
+} Profile;
 
 static std::vector<std::string>
-getNextLineAndSplitIntoTokens (std::istream& str)
+getNextLineAndSplitIntoTokens (std::istream &str)
 {
   std::vector<std::string> result;
   std::string line;
@@ -142,60 +103,64 @@ getNextLineAndSplitIntoTokens (std::istream& str)
   return result;
 }
 
-static std::vector<std::unordered_map<std::string, std::string>>
-ReadProfileCsv (std::istream& str) {
+static StaticProfile
+ReadCsvProfile (std::istream &str)
+{
 
-    std::vector<std::unordered_map<std::string, std::string>> profile;
-    std::vector<std::string> headers;
+  StaticProfile profile;
+  std::vector<std::string> headers;
 
-    // Read Headers
-    if (str.good()) {
-        headers = getNextLineAndSplitIntoTokens(str);
-    } else {
-        return profile;
+  // Read Headers
+  if (str.good ())
+    {
+      headers = getNextLineAndSplitIntoTokens (str);
+    }
+  else
+    {
+      return profile;
     }
 
-    while (str.good()) {
-        std::unordered_map<std::string, std::string> line;
-        std::vector<std::string> values = getNextLineAndSplitIntoTokens(str);
+  while (str.good ())
+    {
+      std::vector<std::string> values = getNextLineAndSplitIntoTokens (str);
+      // Dummy variable for stod
+      std::string::size_type sz;
 
-        if (headers.size() == values.size()) {
-            for (auto headerIt = headers.begin(), valueIt = values.begin();
-                 headerIt != headers.end(); headerIt++, valueIt++) {
-                line.insert(
-                        {*headerIt, *valueIt});
-                NS_LOG_DEBUG("Reading Node profile... " << *headerIt << " : " << *valueIt);
-            }
-            profile.push_back(line);
-        }
+      profile.id = stoi(values[0]);
+      profile.name = values[1];
+      profile.position.x = stod (values[2], &sz);
+      profile.position.y = stod (values[3], &sz);
+
+      NS_LOG_DEBUG("Reading Node profile... " << profile.name);
+
 
     }
 
-    return profile;
+  return profile;
 
 }
 
 static void
 TraceNodeRelationship (Ptr<const SiotApplication> serv1, Ptr<const Relationship> rel,
-		       neo4j_connection_t *connection)
+                       neo4j_connection_t *connection)
 {
 
   neo4j_map_entry_t node1Id = neo4j_map_entry("node1Id", neo4j_int (serv1->GetNode ()->GetId ()));
   neo4j_map_entry_t node2Id = neo4j_map_entry(
       "node2Id", neo4j_int (rel->GetRelatedTo ()->GetNode ()->GetId ()));
   std::string relType = Relationship::RelationshipTypeToString (rel->GetType ());
-  neo4j_map_entry_t relT = neo4j_map_entry("relT", neo4j_string(relType.c_str()));
+  neo4j_map_entry_t relT = neo4j_map_entry("relT", neo4j_string (relType.c_str ()));
   double simTime = Simulator::Now ().GetSeconds ();
   neo4j_map_entry_t simT = neo4j_map_entry("simT", neo4j_int (simTime));
 
   std::vector<neo4j_map_entry_t> vParams =
-    { node1Id, node2Id, relT, simT };
+      {node1Id, node2Id, relT, simT};
 
   neo4j_result_stream_t *results =
       neo4j_run (
-	  connection,
-	  "OPTIONAL MATCH (n:Node {id: {node1Id}}), (m:Node {id: {node2Id}}) MERGE (n)-[r:REL {relT: {relT}, simT: {simT}}]-(m)",
-	  neo4j_map (vParams.data (), vParams.size ()));
+          connection,
+          "OPTIONAL MATCH (n:Node {id: {node1Id}}), (m:Node {id: {node2Id}}) MERGE (n)-[r:REL {relT: {relT}, simT: {simT}}]-(m)",
+          neo4j_map (vParams.data (), vParams.size ()));
 
   if (results == NULL)
     {
@@ -203,50 +168,36 @@ TraceNodeRelationship (Ptr<const SiotApplication> serv1, Ptr<const Relationship>
     }
 
   neo4j_result_t *result = neo4j_fetch_next (results);
-  if (result == NULL)
-    {
-      neo4j_perror (stderr, errno, "Failed to fetch result");
-    }
 
   neo4j_value_t value = neo4j_result_field (result, 0);
   char buf[128];
-  printf ("%s\n", neo4j_tostring (value, buf, sizeof(buf)));
+  neo4j_tostring (value, buf, sizeof (buf));
+  if (strcmp ("Success", buf) != 0) {
+      printf ("%s\n", neo4j_tostring (value, buf, sizeof (buf)));
+    }
 
   neo4j_close_results (results);
 
-  //exit(EXIT_SUCCESS);
-
-  //MATCH (n:Node {id: 1}), (m:Node {id: 2}) CREATE (n)-[r:REL {relT: "SOR"}]->(m) RETURN n,r,m
 }
 
 static void
 RelationshipAdded (neo4j_connection_t *connection, Ptr<const SiotApplication> thisNode,
-		   Ptr<const Relationship> rel)
+                   Ptr<const Relationship> rel)
 {
   auto sp = thisNode->GetProfile ();
-  NS_LOG_DEBUG("Relationship profile: " << rel->GetRelatedTo()->GetProfile());
+  NS_LOG_DEBUG("Relationship profile: " << rel->GetRelatedTo ()->GetProfile ());
   TraceNodeRelationship (thisNode, rel, connection);
 
 }
-
-/*
- static double
- DistanceBetweenNodes (Ptr<Node> node1, Ptr<Node> node2)
- {
- Ptr<MobilityModel> model1 = node1->GetObject<MobilityModel> ();
- Ptr<MobilityModel> model2 = node2->GetObject<MobilityModel> ();
- return model1->GetDistanceFrom (model2);
- }
- */
 
 static void
 NodeEntersRange (Ptr<SiotApplication> app, Ptr<const MobilityModel> node)
 {
   Ptr<SorRelationship> rel = CreateObject<SorRelationship> (
       DynamicCast<SiotApplication> (
-	  node->GetObject<Node> ()->GetApplication (siotApplicationIndex)));
+          node->GetObject<Node> ()->GetApplication (siotApplicationIndex)));
   NS_LOG_UNCOND(
-      "Node Enters Range: " << app->GetNode()->GetId() << "-> " << node->GetObject<Node>()->GetId());
+      "Node Enters Range: " << app->GetNode ()->GetId () << " -> " << node->GetObject<Node> ()->GetId ());
   app->AddSorRelationship (rel);
 }
 
@@ -259,7 +210,7 @@ NodeContact (NodeContainer *nodes, std::ofstream *os)
     {
       Ptr<Node> node1 = nodes->Get (i);
       Ptr<SiotApplicationMobility> serv1 = DynamicCast<SiotApplicationMobility> (
-	  node1->GetApplication (siotApplicationMobilityIndex));
+          node1->GetApplication (siotApplicationMobilityIndex));
 
       serv1->GetInRange ();
 
@@ -271,30 +222,30 @@ NodeContact (NodeContainer *nodes, std::ofstream *os)
 
 static void
 TraceNodesInitialPositionInNeo4j (neo4j_connection_t *connection,
-				  ApplicationContainer &appContainer)
+                                  ApplicationContainer &appContainer)
 {
   //Add nodes to neo4j database
   for (unsigned int i = 0; i < appContainer.GetN (); i++)
     {
       neo4j_map_entry_t nodeId = neo4j_map_entry(
-	  "nodeId", neo4j_int (appContainer.Get (i)->GetNode ()->GetId ()));
+          "nodeId", neo4j_int (appContainer.Get (i)->GetNode ()->GetId ()));
 
       neo4j_result_stream_t *results = neo4j_run (connection, "CREATE (n:Node {id:{nodeId}})",
-						  neo4j_map (&nodeId, 1));
+                                                  neo4j_map (&nodeId, 1));
       if (results == NULL)
-	{
-	  neo4j_perror (stderr, errno, "Failed to run statement");
-	}
+        {
+          neo4j_perror (stderr, errno, "Failed to run statement");
+        }
 
       neo4j_result_t *result = neo4j_fetch_next (results);
       if (result == NULL)
-	{
-	  neo4j_perror (stderr, errno, "Failed to fetch result");
-	}
+        {
+          neo4j_perror (stderr, errno, "Failed to fetch result");
+        }
 
       neo4j_value_t value = neo4j_result_field (result, 0);
       char buf[128];
-      printf ("%s\n", neo4j_tostring (value, buf, sizeof(buf)));
+      printf ("%s\n", neo4j_tostring (value, buf, sizeof (buf)));
 
       neo4j_close_results (results);
 
@@ -346,17 +297,17 @@ main (int argc, char *argv[])
   if (traceFile.empty () || nodeNum <= 0 || duration <= 0 || logFile.empty ())
     {
       std::cout << "Usage of " << argv[0]
-	  << " :\n\n"
-	      "./waf --run \"ns2-mobility-trace"
-	      " --traceFile=src/mobility/examples/default.ns_movements"
-	      " --nodeNum=2 --duration=100.0 --logFile=ns2-mob.log"
-	      " --distanceLogFile=distance.tr"
-	      " --animationFile=animation.xml\" \n\n"
-	      "NOTE: ns2-traces-file could be an absolute or relative path. You could use the file default.ns_movements\n"
-	      "      included in the same directory of this example file.\n\n"
-	      "NOTE 2: Number of nodes present in the trace file must match with the command line argument and must\n"
-	      "        be a positive number. Note that you must know it before to be able to load it.\n\n"
-	      "NOTE 3: Duration must be a positive number. Note that you must know it before to be able to load it.\n\n";
+                << " :\n\n"
+                   "./waf --run \"ns2-mobility-trace"
+                   " --traceFile=src/mobility/examples/default.ns_movements"
+                   " --nodeNum=2 --duration=100.0 --logFile=ns2-mob.log"
+                   " --distanceLogFile=distance.tr"
+                   " --animationFile=animation.xml\" \n\n"
+                   "NOTE: ns2-traces-file could be an absolute or relative path. You could use the file default.ns_movements\n"
+                   "      included in the same directory of this example file.\n\n"
+                   "NOTE 2: Number of nodes present in the trace file must match with the command line argument and must\n"
+                   "        be a positive number. Note that you must know it before to be able to load it.\n\n"
+                   "NOTE 3: Duration must be a positive number. Note that you must know it before to be able to load it.\n\n";
 
       return 0;
     }
@@ -392,7 +343,7 @@ main (int argc, char *argv[])
 
   /* use NEO4J_INSECURE when connecting to disable TLS */
   neo4j_connection_t *connection = neo4j_connect ("neo4j://neo4j:neo4jx@localhost:7687", NULL,
-  NEO4J_INSECURE);
+                                                  NEO4J_INSECURE);
   if (connection == NULL)
     {
       neo4j_perror (stderr, errno, "Connection failed");
@@ -404,18 +355,18 @@ main (int argc, char *argv[])
   std::vector<Ptr<const MobilityModel>> vm;
   vm.resize (appContainer.GetN ());
   std::transform (appContainer.Begin (), appContainer.End (), vm.begin (),
-		  GetMobilityModelFromApplication);
+                  GetMobilityModelFromApplication);
 
   for (unsigned int i = 0; i < stas.GetN (); i++)
     {
       Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication> (
-	  stas.Get (i)->GetApplication (siotApplicationIndex));
+          stas.Get (i)->GetApplication (siotApplicationIndex));
       Ptr<SiotApplicationMobility> serv1m = DynamicCast<SiotApplicationMobility> (
-	  stas.Get (i)->GetApplication (siotApplicationMobilityIndex));
+          stas.Get (i)->GetApplication (siotApplicationMobilityIndex));
       serv1m->Watch (vm);
       // NS_LOG_UNCOND("Mobility: " << serv1m);
       serv1->TraceConnectWithoutContext ("RelationshipAdded",
-					 MakeBoundCallback (&RelationshipAdded, connection));
+                                         MakeBoundCallback (&RelationshipAdded, connection));
       serv1m->TraceConnectWithoutContext ("NodeEntersRange", MakeCallback (&NodeEntersRange));
     }
 
@@ -426,8 +377,8 @@ main (int argc, char *argv[])
       isProfile.open (profileFile.c_str ());
 
       // Read node profiles
-      std::vector<std::unordered_map<std::string, std::string>> profiles = ReadProfileCsv (
-	  isProfile);
+      std::vector<std::unordered_map<std::string, std::string>> profiles = ReadCsvProfile (
+          isProfile);
 
       // Close profile file
       isProfile.close ();
@@ -437,19 +388,19 @@ main (int argc, char *argv[])
 
       // Add profiles to SiotApplications
       for (unsigned int i = 0; i < stasSize; i++)
-	{
-	  Vector3D pos = stas.Get (i)->GetObject<MobilityModel> ()->GetPosition ();
-	  profiles.at (i).insert (
-	    { "x_pos", std::to_string (pos.x) });
-	  profiles.at (i).insert (
-	    { "y_pos", std::to_string (pos.y) });
-	  profiles.at (i).insert (
-	    { "z_pos", std::to_string (pos.z) });
-	  Ptr<ServiceProfile> sp = CreateObject<ServiceProfile> ("energy_profile", profiles.at (i));
-	  Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication> (
-	      stas.Get (i)->GetApplication (siotApplicationIndex));
-	  serv1->SetServiceProfile (sp);
-	}
+        {
+          Vector3D pos = stas.Get (i)->GetObject<MobilityModel> ()->GetPosition ();
+          profiles.at (i).insert (
+              {"x_pos", std::to_string (pos.x)});
+          profiles.at (i).insert (
+              {"y_pos", std::to_string (pos.y)});
+          profiles.at (i).insert (
+              {"z_pos", std::to_string (pos.z)});
+          Ptr<ServiceProfile> sp = CreateObject<ServiceProfile> ("energy_profile", profiles.at (i));
+          Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication> (
+              stas.Get (i)->GetApplication (siotApplicationIndex));
+          serv1->SetServiceProfile (sp);
+        }
     }
   else
     {
@@ -461,25 +412,25 @@ main (int argc, char *argv[])
 
       // Add profiles to SiotApplications
       for (unsigned int i = 0; i < stasSize; i++)
-	{
-	  std::unordered_map<std::string, std::string> map;
+        {
+          std::unordered_map<std::string, std::string> map;
 
-	  Vector3D pos = stas.Get (i)->GetObject<MobilityModel> ()->GetPosition ();
-	  map.insert (
-	    { "x_pos", std::to_string (pos.x) });
-	  map.insert (
-	    { "y_pos", std::to_string (pos.y) });
-	  map.insert (
-	    { "z_pos", std::to_string (pos.z) });
+          Vector3D pos = stas.Get (i)->GetObject<MobilityModel> ()->GetPosition ();
+          map.insert (
+              {"x_pos", std::to_string (pos.x)});
+          map.insert (
+              {"y_pos", std::to_string (pos.y)});
+          map.insert (
+              {"z_pos", std::to_string (pos.z)});
 
-	  profiles.push_back (map);
+          profiles.push_back (map);
 
-	  Ptr<ServiceProfile> sp = CreateObject<ServiceProfile> ("energy_profile", profiles.at (i));
-	  Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication> (
-	      stas.Get (i)->GetApplication (siotApplicationIndex));
-	  serv1->SetServiceProfile (sp);
+          Ptr<ServiceProfile> sp = CreateObject<ServiceProfile> ("energy_profile", profiles.at (i));
+          Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication> (
+              stas.Get (i)->GetApplication (siotApplicationIndex));
+          serv1->SetServiceProfile (sp);
 
-	}
+        }
 
     }
 

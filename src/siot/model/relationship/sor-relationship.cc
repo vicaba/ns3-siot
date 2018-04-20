@@ -25,24 +25,24 @@
 namespace ns3
 {
 
-SorRelationship::SorRelationship (Ptr<SiotApplication> rel) :
-    Relationship (rel)
-{
-  // TODO Auto-generated constructor stub
+    SorRelationship::SorRelationship (Ptr<SiotApplication> rel) :
+        Relationship (rel)
+    {
+      // TODO Auto-generated constructor stub
 
-}
+    }
 
-SorRelationship::~SorRelationship ()
-{
-  // TODO Auto-generated destructor stub
-}
+    SorRelationship::~SorRelationship ()
+    {
+      // TODO Auto-generated destructor stub
+    }
 
-const Relationship::Type
-SorRelationship::GetType () const
-{
-  return Relationship::Type::SOR;
+    const Relationship::Type
+    SorRelationship::GetType () const
+    {
+      return Relationship::Type::SOR;
 
-}
+    }
 
 }/* namespace ns3 */
 

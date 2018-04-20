@@ -26,32 +26,30 @@
 namespace ns3
 {
 
-class SiotApplication;
+    class SiotApplication;
 
-class Relationship : public Object
-{
-public:
+    class Relationship : public Object {
+     public:
 
-  enum class Type
-  {
-    POR, CLOR, CWOR, OOR, SOR
-  };
+      enum class Type {
+        POR, CLOR, CWOR, OOR, SOR
+      };
 
-  static std::string
-  RelationshipTypeToString (Relationship::Type);
-  Relationship (Ptr<SiotApplication>);
-  virtual
-  ~Relationship ();
-  Ptr<SiotApplication>
-  GetRelatedTo () const;
-  virtual const Relationship::Type
-  GetType () const = 0;
+      static std::string
+      RelationshipTypeToString (Relationship::Type);
+      Relationship (Ptr<SiotApplication>);
+      virtual
+      ~Relationship ();
+      Ptr<SiotApplication>
+      GetRelatedTo () const;
+      virtual const Relationship::Type
+      GetType () const = 0;
 
-protected:
-  //Relationship::Type m_relType;
-  Ptr<SiotApplication> m_relNode;
+     protected:
+      //Relationship::Type m_relType;
+      Ptr<SiotApplication> m_relNode;
 
-};
+    };
 
 }
 

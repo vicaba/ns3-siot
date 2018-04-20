@@ -36,110 +36,110 @@
 #include "ns3/uinteger.h"
 #include "ns3/ptr.h"
 
-namespace ns3 {
-
-
-NS_LOG_COMPONENT_DEFINE("SiotApplication");
-
-NS_OBJECT_ENSURE_REGISTERED(SiotApplication);
-
-TypeId SiotApplication::GetTypeId(void)
+namespace ns3
 {
-	static TypeId tid =
-			TypeId("ns3::SiotApplication")
-			.SetParent<Application>()
-			.SetGroupName("Applications")
-			.AddConstructor<SiotApplication>()
-			.AddAttribute("Port", "Port on which we listen for incoming packets.",
-					UintegerValue(9),
-					MakeUintegerAccessor(&SiotApplication::m_port),
-					MakeUintegerChecker<uint16_t>())
-			.AddTraceSource ("RelationshipAdded",
-					"The value of the relationship added",
-					MakeTraceSourceAccessor (&SiotApplication::m_relationshipAddedTrace),
-					"ns3::SiotApplication::RelationshipAddedCallback");
-	return tid;
-}
 
-SiotApplication::SiotApplication ()
-{
-  NS_LOG_FUNCTION(this);
-}
+    NS_LOG_COMPONENT_DEFINE("SiotApplication");
 
-SiotApplication::~SiotApplication ()
-{
-  NS_LOG_FUNCTION(this);
-  this->m_cworRelationships.clear ();
-  this->m_sorRelationships.clear ();
-  m_socket = 0;
-  m_socket6 = 0;
-}
+    NS_OBJECT_ENSURE_REGISTERED(SiotApplication);
 
-void
-SiotApplication::DoDispose (void)
-{
-  NS_LOG_FUNCTION(this);
+    TypeId SiotApplication::GetTypeId (void)
+    {
+      static TypeId tid =
+          TypeId ("ns3::SiotApplication")
+              .SetParent<Application> ()
+              .SetGroupName ("Applications")
+              .AddConstructor<SiotApplication> ()
+              .AddAttribute ("Port", "Port on which we listen for incoming packets.",
+                             UintegerValue (9),
+                             MakeUintegerAccessor (&SiotApplication::m_port),
+                             MakeUintegerChecker<uint16_t> ())
+              .AddTraceSource ("RelationshipAdded",
+                               "The value of the relationship added",
+                               MakeTraceSourceAccessor (&SiotApplication::m_relationshipAddedTrace),
+                               "ns3::SiotApplication::RelationshipAddedCallback");
+      return tid;
+    }
 
-  Application::DoDispose ();
-}
+    SiotApplication::SiotApplication ()
+    {
+      NS_LOG_FUNCTION(this);
+    }
 
-void
-SiotApplication::StartApplication (void)
-{
-}
+    SiotApplication::~SiotApplication ()
+    {
+      NS_LOG_FUNCTION(this);
+      this->m_cworRelationships.clear ();
+      this->m_sorRelationships.clear ();
+      m_socket = 0;
+      m_socket6 = 0;
+    }
 
-void
-SiotApplication::StopApplication ()
-{
-}
+    void
+    SiotApplication::DoDispose (void)
+    {
+      NS_LOG_FUNCTION(this);
 
-void
-SiotApplication::HandleRead (Ptr<Socket> socket)
-{
-}
+      Application::DoDispose ();
+    }
 
-void
-SiotApplication::SetServiceProfile (Ptr<ServiceProfile> sp)
-{
-  this->m_serviceProfile = sp;
-}
+    void
+    SiotApplication::StartApplication (void)
+    {
+    }
 
-const Ptr<const ServiceProfile>
-SiotApplication::GetProfile () const
-{
-  return this->m_serviceProfile;
-}
+    void
+    SiotApplication::StopApplication ()
+    {
+    }
 
-void
-SiotApplication::AddCworRelationship (const Ptr<CworRelationship> rel)
-{
-  this->m_cworRelationships.push_front (rel);
-  this->NotifyRelationshipAdded (rel);
-}
+    void
+    SiotApplication::HandleRead (Ptr<Socket> socket)
+    {
+    }
 
-void
-SiotApplication::AddSorRelationship (const Ptr<SorRelationship> rel)
-{
-  this->m_sorRelationships.push_front (rel);
-  this->NotifyRelationshipAdded (rel);
-}
+    void
+    SiotApplication::SetServiceProfile (Ptr<ServiceProfile> sp)
+    {
+      this->m_serviceProfile = sp;
+    }
 
-const std::list<Ptr<CworRelationship>>
-SiotApplication::GetCworRelationships ()
-{
-  return this->m_cworRelationships;
-}
+    const Ptr<const ServiceProfile>
+    SiotApplication::GetProfile () const
+    {
+      return this->m_serviceProfile;
+    }
 
-const std::list<Ptr<SorRelationship>>
-SiotApplication::GetSorRelationships ()
-{
-  return this->m_sorRelationships;
-}
+    void
+    SiotApplication::AddCworRelationship (const Ptr<CworRelationship> rel)
+    {
+      this->m_cworRelationships.push_front (rel);
+      this->NotifyRelationshipAdded (rel);
+    }
 
-void
-SiotApplication::NotifyRelationshipAdded (Ptr<const Relationship> rel)
-{
-  this->m_relationshipAddedTrace (this, rel);
-}
+    void
+    SiotApplication::AddSorRelationship (const Ptr<SorRelationship> rel)
+    {
+      this->m_sorRelationships.push_front (rel);
+      this->NotifyRelationshipAdded (rel);
+    }
+
+    const std::list<Ptr<CworRelationship>>
+    SiotApplication::GetCworRelationships ()
+    {
+      return this->m_cworRelationships;
+    }
+
+    const std::list<Ptr<SorRelationship>>
+    SiotApplication::GetSorRelationships ()
+    {
+      return this->m_sorRelationships;
+    }
+
+    void
+    SiotApplication::NotifyRelationshipAdded (Ptr<const Relationship> rel)
+    {
+      this->m_relationshipAddedTrace (this, rel);
+    }
 
 } /* namespace ns3 */

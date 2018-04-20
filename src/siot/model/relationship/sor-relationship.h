@@ -29,15 +29,14 @@
 namespace ns3
 {
 
-class SorRelationship : public Relationship
-{
-public:
-  SorRelationship (Ptr<SiotApplication>);
-  virtual
-  ~SorRelationship ();
-  virtual const Relationship::Type
-  GetType () const;
-};
+    class SorRelationship : public Relationship {
+     public:
+      SorRelationship (Ptr<SiotApplication>);
+      virtual
+      ~SorRelationship ();
+      virtual const Relationship::Type
+      GetType () const;
+    };
 
 } /* namespace ns3 */
 
