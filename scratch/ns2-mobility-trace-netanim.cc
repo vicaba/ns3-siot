@@ -87,6 +87,7 @@ getNextLineAndSplitIntoTokens (std::istream &str)
   while (std::getline (lineStream, cell, ','))
     {
       result.push_back (cell);
+      NS_LOG_UNCOND (cell);
     }
   // This checks for a trailing comma with no data after it.
   if (!lineStream && cell.empty ())
@@ -114,16 +115,20 @@ ReadCsvProfile (std::istream &str)
       return profileVector;
     }
 
-  while (str.good ())
+  while (str.peek () && str.good())
     {
+
       Profile profile;
       std::vector<std::string> values = getNextLineAndSplitIntoTokens (str);
-      // Dummy variable for stod
-      std::string::size_type sz;
+
       Vector position;
 
-      position.x = stod (values[2], &sz);
-      position.y = stod (values[3], &sz);
+      NS_LOG_UNCOND ("PosOne" << values[2]);
+
+      position.x = stod (values[2]);
+      position.y = stod (values[3]);
+
+      NS_LOG_UNCOND ("PosTwo" << values[2]);
 
       profile.SetId (stoi(values[0]));
       profile.SetName (values[1]);
@@ -183,8 +188,8 @@ static void
 RelationshipAdded (neo4j_connection_t *connection, Ptr<const SiotApplication> thisNode,
                    Ptr<const Relationship> rel)
 {
-  auto sp = thisNode->GetProfile ();
-  NS_LOG_DEBUG("Relationship profile: " << rel->GetRelatedTo ()->GetProfile ());
+  auto sp = thisNode->GetServiceProfile ();
+  NS_LOG_DEBUG("Relationship profile: " << rel->GetRelatedTo ()->GetServiceProfile ());
   TraceNodeRelationship (thisNode, rel, connection);
 
 }
@@ -221,16 +226,32 @@ NodeContact (NodeContainer *nodes, std::ofstream *os)
 
 static void
 TraceNodesInitialPositionInNeo4j (neo4j_connection_t *connection,
-                                  ApplicationContainer &appContainer)
+                                  ApplicationContainer &appContainer,
+                                  std::vector<Profile> &profiles)
 {
+
   //Add nodes to neo4j database
   for (unsigned int i = 0; i < appContainer.GetN (); i++)
     {
+      // Create variables for neo4j
       neo4j_map_entry_t nodeId = neo4j_map_entry(
           "nodeId", neo4j_int (appContainer.Get (i)->GetNode ()->GetId ()));
+      neo4j_map_entry_t nodeName = neo4j_map_entry (
+        "nodeName", neo4j_string (profiles.at (i).GetName().c_str ())
+      );
+      neo4j_map_entry_t initialPosX = neo4j_map_entry (
+        "nodeInitialPosX", neo4j_float (profiles.at (i).GetInitialPosition ().x)
+        );
+      neo4j_map_entry_t initialPosY = neo4j_map_entry (
+        "nodeInitialPosY", neo4j_float (profiles.at (i).GetInitialPosition ().y)
+      );
 
-      neo4j_result_stream_t *results = neo4j_run (connection, "CREATE (n:Node {id:{nodeId}})",
-                                                  neo4j_map (&nodeId, 1));
+      std::vector<neo4j_map_entry_t> vParams = {
+        nodeId, nodeName, initialPosX, initialPosY
+      };
+
+      neo4j_result_stream_t *results = neo4j_run (connection, "CREATE (n:Node {id:{nodeId}, name:{nodeName}, initialPosX:{nodeInitialPosX}, initialPosY:{nodeInitialPosX}})",
+                                                  neo4j_map (vParams.data(), vParams.size ()));
       if (results == NULL)
         {
           neo4j_perror (stderr, errno, "Failed to run statement");
@@ -361,7 +382,7 @@ main (int argc, char *argv[])
       isProfiles.close ();
     }
 
-  TraceNodesInitialPositionInNeo4j (connection, appContainer);
+  TraceNodesInitialPositionInNeo4j (connection, appContainer, profiles);
 
   // Make every node watch other nodes and add callbacks
   std::vector<Ptr<const MobilityModel>> mobilityModels;

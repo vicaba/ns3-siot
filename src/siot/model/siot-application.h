@@ -29,6 +29,7 @@
 #include "ns3/sor-relationship.h"
 
 #include "ns3/service-profile.h"
+#include "ns3/profile.h"
 
 namespace ns3
 {
@@ -44,19 +45,33 @@ namespace ns3
        */
       static TypeId
       GetTypeId (void);
+
       SiotApplication ();
+
       virtual
       ~SiotApplication ();
+
       void
       SetServiceProfile (Ptr<ServiceProfile>);
+
       const Ptr<const ServiceProfile>
-      GetProfile () const;
+      GetServiceProfile () const;
+
+      void
+      SetStaticProfile(Ptr<Profile> staticProfile);
+
+      const Ptr<const Profile>
+      GetStaticProfile() const;
+
       void
       AddCworRelationship (const Ptr<CworRelationship>);
+
       void
       AddSorRelationship (const Ptr<SorRelationship>);
+
       const std::list<Ptr<CworRelationship>>
       GetCworRelationships ();
+
       const std::list<Ptr<SorRelationship>>
       GetSorRelationships ();
 
@@ -93,7 +108,7 @@ namespace ns3
       std::list<Ptr<CworRelationship>> m_cworRelationships;
       std::list<Ptr<SorRelationship>> m_sorRelationships;
       Ptr<ServiceProfile> m_serviceProfile;
-      //MobilityAdjacency m_mobilityAdjacency;
+      Ptr<Profile> m_staticProfile;
 
       ns3::TracedCallback<Ptr<const SiotApplication>, Ptr<const Relationship>> m_relationshipAddedTrace;
     };

@@ -26,7 +26,7 @@
 namespace ns3
 {
 
-  class Profile {
+  class Profile : public Object{
 
    public:
 

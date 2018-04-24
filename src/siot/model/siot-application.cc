@@ -105,9 +105,21 @@ namespace ns3
     }
 
     const Ptr<const ServiceProfile>
-    SiotApplication::GetProfile () const
+    SiotApplication::GetServiceProfile () const
     {
       return this->m_serviceProfile;
+    }
+
+    void
+    SiotApplication::SetStaticProfile (Ptr<Profile> staticProfile)
+    {
+      this->m_staticProfile = staticProfile;
+    }
+
+    const Ptr<const Profile>
+    SiotApplication::GetStaticProfile () const
+    {
+      return this->m_staticProfile;
     }
 
     void
