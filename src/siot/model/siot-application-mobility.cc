@@ -33,7 +33,7 @@ namespace ns3
     SiotApplicationMobility::GetTypeId (void)
     {
       static TypeId tid =
-          TypeId ("ns3::SiotApplicationMobility").SetParent<Application> ().SetGroupName (
+        TypeId ("ns3::SiotApplicationMobility").SetParent<Application> ().SetGroupName (
               "Applications").AddTraceSource (
               "NodeEntersRange", "A node has entered physical range",
               MakeTraceSourceAccessor (&SiotApplicationMobility::m_nodeEntersRangeTrace),
@@ -65,6 +65,13 @@ namespace ns3
         }
     }
 
+  /**
+   * Checks which nodes are in range of this node.
+   * This method updates an internal variable that keeps track of the nodes that are currently in range.
+   * It also calls callbacks that notify if a node has entered range or has leaved range.
+   *
+   * @return The nodes that are currently in range.
+   */
     std::vector<Ptr<const MobilityModel>>
     SiotApplicationMobility::GetInRange ()
     {
@@ -98,6 +105,11 @@ namespace ns3
       return inRangeVector;
     }
 
+  /**
+   * Checks if another node is in range of this node.
+   * @param other the other node
+   * @return a tuple. The first variable contains if the other node is in range or not as a boolean. The second variable is the id of the other node
+   */
     std::tuple<bool, double>
     SiotApplicationMobility::IsNodeInRange (Ptr<const MobilityModel> other)
     {

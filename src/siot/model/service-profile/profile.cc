@@ -71,7 +71,7 @@ namespace ns3
   std::ostream &
   operator<< (std::ostream &outputStream, const Profile &p)
   {
-    outputStream << std::to_string ( p.GetId ()) << ", " << p.GetName () << ", " << std::to_string (this->m_initialPosition.x) << " " << std::to_string (this->m_initialPosition.y);
+    outputStream << std::to_string ( p.GetId ()) << ", " << p.GetName () << ", " << std::to_string (p.m_initialPosition.x) << " " << std::to_string (p.m_initialPosition.y);
     return outputStream;
   }
 

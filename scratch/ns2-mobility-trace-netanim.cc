@@ -97,11 +97,11 @@ getNextLineAndSplitIntoTokens (std::istream &str)
   return result;
 }
 
-static Profile
+static std::vector<Profile>
 ReadCsvProfile (std::istream &str)
 {
 
-  Profile profile;
+  std::vector<Profile> profileVector;
   std::vector<std::string> headers;
 
   // Read Headers
@@ -111,11 +111,12 @@ ReadCsvProfile (std::istream &str)
     }
   else
     {
-      return profile;
+      return profileVector;
     }
 
   while (str.good ())
     {
+      Profile profile;
       std::vector<std::string> values = getNextLineAndSplitIntoTokens (str);
       // Dummy variable for stod
       std::string::size_type sz;
@@ -128,12 +129,13 @@ ReadCsvProfile (std::istream &str)
       profile.SetName (values[1]);
       profile.SetInitialPosition (position);
 
-      NS_LOG_DEBUG("Reading Node profile... " << profile);
+      profileVector.push_back (profile);
 
+      NS_LOG_DEBUG("Reading Node profile... " << profile);
 
     }
 
-  return profile;
+  return profileVector;
 
 }
 
@@ -332,7 +334,7 @@ main (int argc, char *argv[])
   ns2.Install (stas.Begin (), stas.End ()); // configure movements for each node, while reading trace file
 
   // Create SIoT app helper and install siot app on all nodes
-  SiotApplicationHelper siot (9);
+  SiotApplicationHelper siot (nodeNum);
   ApplicationContainer appContainer = siot.Install (stas);
 
   // Open neo4j client
@@ -347,58 +349,45 @@ main (int argc, char *argv[])
       return EXIT_FAILURE;
     }
 
+  std::ifstream isProfiles;
+  std::vector<Profile> profiles;
+
+  if (externalProfileFile) {
+      isProfiles.open (profileFile.c_str ());
+
+      profiles = ReadCsvProfile (isProfiles);
+
+      // Close output profiles file
+      isProfiles.close ();
+    }
+
   TraceNodesInitialPositionInNeo4j (connection, appContainer);
 
-  std::vector<Ptr<const MobilityModel>> vm;
-  vm.resize (appContainer.GetN ());
-  std::transform (appContainer.Begin (), appContainer.End (), vm.begin (),
+  // Make every node watch other nodes and add callbacks
+  std::vector<Ptr<const MobilityModel>> mobilityModels;
+  mobilityModels.resize (appContainer.GetN ());
+  std::transform (appContainer.Begin (), appContainer.End (), mobilityModels.begin (),
                   GetMobilityModelFromApplication);
 
   for (unsigned int i = 0; i < stas.GetN (); i++)
     {
-      Ptr<SiotApplication> serv1 = DynamicCast<SiotApplication> (
+      Ptr<SiotApplication> siotApp = DynamicCast<SiotApplication> (
           stas.Get (i)->GetApplication (siotApplicationIndex));
-      Ptr<SiotApplicationMobility> serv1m = DynamicCast<SiotApplicationMobility> (
+      Ptr<SiotApplicationMobility> siotMobilityApp = DynamicCast<SiotApplicationMobility> (
           stas.Get (i)->GetApplication (siotApplicationMobilityIndex));
-      serv1m->Watch (vm);
-      // NS_LOG_UNCOND("Mobility: " << serv1m);
-      serv1->TraceConnectWithoutContext ("RelationshipAdded",
+      siotMobilityApp->Watch (mobilityModels);
+      // Add callbacks
+      siotApp->TraceConnectWithoutContext ("RelationshipAdded",
                                          MakeBoundCallback (&RelationshipAdded, connection));
-      serv1m->TraceConnectWithoutContext ("NodeEntersRange", MakeCallback (&NodeEntersRange));
+      siotMobilityApp->TraceConnectWithoutContext ("NodeEntersRange", MakeCallback (&NodeEntersRange));
     }
 
-  if (externalProfileFile)
-    {
-
-    }
-  else
-    {
-
-    }
-
-  // Open file to log profiles and positios of nodes
+  // Open file to log profiles and positions of nodes
   std::ofstream osProfiles;
   osProfiles.open (outputProfilesFile.c_str ());
 
   // Close output profiles file
   osProfiles.close ();
-
-  /*
-   NodeContainer clusterCenters;
-
-
-   std::tie(stas, clusterCenters) = CreateCenters(12, 12, stas, 4);
-
-   for (unsigned int i = 0; i < 4; i++)
-   {
-   Ptr<MobilityModel> model1 = clusterCenters.Get(i)->GetObject<
-   ConstantPositionMobilityModel>();
-
-   NS_LOG_UNCOND("Mobility Model: " << model1);
-   NS_LOG_UNCOND("PosX: " << model1->GetPosition().x);
-   NS_LOG_UNCOND("PosY: " << model1->GetPosition().y);
-   }
-   */
 
   AnimationInterface anim (animFile);
 

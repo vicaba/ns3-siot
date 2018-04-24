@@ -35,12 +35,16 @@ namespace ns3
 {
     class SiotApplication;
 
+    /**
+     * This class collaborates with the SIoT application and the mobility model of the node.
+     * It helps on being aware of the mobility features of the model.
+     */
     class SiotApplicationMobility : public Application {
      public:
 
       /**
-       *  \brief Get the type ID.
-       *  \return the object TypeId
+       * Get the type ID.
+       * @return the object TypeId
        */
       static TypeId
       GetTypeId (void);
@@ -49,16 +53,17 @@ namespace ns3
                                Ptr<MobilityModel> mobilityModel);
 
       /**
-       *  \param nodes nodes to add to the watch list
+       * @param nodes nodes to add to the watch list
        */
       void
       Watch (std::vector<Ptr<const MobilityModel>>);
 
       /**
-       *  \returns the nodes that are currently in range
+       * Calculates which nodes have entered or leaved range.
+       * Calls NotifyNodeEntersRange and NotifyNodeLeavesRange respectively.
        *
-       *	Calculates which nodes have entered or leaved range.
-       *	Calls NotifyNodeEntersRange and NotifyNodeLeavesRange respectively.
+       * @returns the nodes that are currently in range
+       *
        */
       std::vector<Ptr<const MobilityModel>>
       GetInRange ();
@@ -66,8 +71,15 @@ namespace ns3
       virtual
       ~SiotApplicationMobility ();
 
+      /**
+       * This callback is called when a node enters the range of this node. Note that it can only be triggered when GetInRange is called.
+       */
       typedef void
       (*NodeEntersRangeCallback) (Ptr<SiotApplication>, Ptr<const MobilityModel>);
+
+      /**
+        * This callback is called when a node leaves the range of this node. Note that it can only be triggered when GetInRange is called.
+        */
       typedef void
       (*NodeLeavesRangeCallback) (Ptr<SiotApplication>, Ptr<const MobilityModel>);
 
@@ -94,10 +106,13 @@ namespace ns3
       std::unordered_map<std::uint32_t, Ptr<const MobilityModel>> m_watching;
 
       /**
-       *  Keeps track of nodes that are currently in range
+       * Keeps track of nodes that are currently in range
        */
       std::set<uint32_t> m_inRange;
 
+      /**
+       * The underlying application
+       */
       Ptr<SiotApplication> m_app;
       Ptr<MobilityModel> m_mobilityModel;
 
